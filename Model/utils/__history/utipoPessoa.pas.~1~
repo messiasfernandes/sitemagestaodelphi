@@ -1,0 +1,10 @@
+unit utipoPessoa;
+
+interface
+        type
+        {$SCOPEDENUMS ON}
+            TTipoPessoa = (JURÍDiCA, FÍSICA);
+             {$SCOPEDENUMS OFF}
+implementation
+
+end.

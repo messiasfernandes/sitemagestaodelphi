@@ -1,0 +1,155 @@
+unit SistemaGestao.Model.DaoCidade;
+
+interface
+       uses SistemaGestao.Model.EntidadeCidade, SistemaGestao.Model.DmConexaoEventos,
+       System.Generics.Collections,SistemaGestao.Model.EntidadeUsuarioComToken,
+       REST.Json,REST.Utils,RESTRequest4D.Request,RESTRequest4D.Response,RESTRequest4D.Request.Intf,
+         SistemaGestao.Model.IterfaceDao,Vcl.Dialogs,System.StrUtils,System.SysUtils;
+         type TDaoCidade = class(TInterfacedObject, Idao<TCidade>)
+              private
+             dm:TDataEventos;
+             cidade:TCidade;
+              protected
+                { protected declarations }
+              public
+                 function salvar (objeto:TCidade;usuario:TUsuarioComToken):string;
+         function Carregar(objeto: TCidade;usuario:TUsuarioComToken): TCidade;
+         function Excluir (pid:integer;usuario:TUsuarioComToken):string;
+         function pesquisa(colecao: TObjectList<TCidade>;pchave,ptipo:string ;usuario:TUsuarioComToken): TObjectList<TCidade>;
+          function buscar(objeto:TCidade;usuario:TUsuarioComToken):TCidade;
+              published
+               constructor Create;
+               destructor Destroy;  override;
+              end;
+implementation
+
+uses
+  System.Classes;
+
+{ TDaoCidade }
+
+
+
+function TDaoCidade.buscar(objeto: TCidade; usuario: TUsuarioComToken): TCidade;
+var lResponse:IResponse;
+begin
+    lResponse:=    TRequest.New.BaseURL('http://192.168.1.3:8080/' ).
+         AcceptCharset ('application/json').
+          Resource( 'cidades/por-nome?nomecidade='+objeto.cidadenome).
+      BasicAuthentication(usuario.funcionario.email,usuario.senha).
+
+  ///    AddParam('nomecidade',parmetro).
+    DataSetAdapter(dm.FDMemCidade).Get;
+     if lResponse.StatusCode=200 then
+     begin
+        objeto.codigo_cidade:= dm.FDMemCidadecodigo_cidade.Value;
+     objeto.codigoibge:= dm.FDMemCidadecodigoibge.Value;
+     objeto.cidadenome:= dm.FDMemCidadecidadenome.Value;
+     objeto.estado.nomestado:=dm.FDMemCidadeestadonomestado.Value;
+    objeto.estado.uf:=dm.FDMemCidadeestadouf.Value;
+     end;
+
+
+    Result:=  objeto;
+end;
+
+function TDaoCidade.Carregar(objeto: TCidade;
+  usuario: TUsuarioComToken): TCidade;
+begin
+     TRequest.New.BaseURL('http://192.168.1.3:8080/' ).
+       AcceptCharset ('application/json').
+          Resource( 'cidades/'+ objeto.codigo_cidade.ToString).
+       BasicAuthentication(usuario.funcionario.email,usuario.senha).
+        // .AddHeader('Headers',usuario.token)
+
+
+        DataSetAdapter(dm.FDMemCidade).Get ;
+
+    objeto.codigo_cidade:= dm.FDMemCidadecodigo_cidade.Value;
+     objeto.codigoibge:= dm.FDMemCidadecodigoibge.Value;
+     objeto.cidadenome:= dm.FDMemCidadecidadenome.Value;
+     objeto.estado.nomestado:=dm.FDMemCidadeestadonomestado.Value;
+     objeto.estado.uf:=dm.FDMemCidadeestadouf.Value;
+    Result:=  objeto;
+end;
+
+constructor TDaoCidade.Create;
+begin
+  dm:=TDataEventos.Create(nil);
+
+end;
+
+destructor TDaoCidade.Destroy;
+begin
+  dm.Free;
+
+  inherited;
+end;
+
+function TDaoCidade.Excluir(pid: integer; usuario: TUsuarioComToken): string;
+begin
+
+end;
+
+function TDaoCidade.pesquisa(colecao: TObjectList<TCidade>; pchave,
+  ptipo: string; usuario: TUsuarioComToken): TObjectList<TCidade>;
+  var lResponse:IResponse;
+  cidade:TCidade;
+begin
+
+   if Length (pchave)=0 then
+    lREsponse:=    TRequest.New.BaseURL('http://192.168.1.3:8080/' ).
+
+     Resource( 'cidades/').
+    BasicAuthentication(usuario.funcionario.email,usuario.senha).
+    AcceptCharset ('application/json').
+    DataSetAdapter(dm.FDMemCidade).Get
+    else
+if ptipo='&Código' then
+
+  lREsponse:=    TRequest.New.BaseURL('http://192.168.1.3:8080/' ).AcceptCharset ('application/json').
+          Resource( 'cidades/'+pchave).
+       BasicAuthentication(usuario.funcionario.email,usuario.senha).
+    DataSetAdapter(dm.FDMemCidade).Get
+    else
+
+  begin
+    lREsponse:=   TRequest.New.BaseURL('http://192.168.1.3:8080/' ).AcceptCharset ('application/json').
+          Resource( '/cidades/por-nome-comecando-com/?').
+      BasicAuthentication(usuario.funcionario.email,usuario.senha).
+
+      AddParam('parametro',pchave).
+    DataSetAdapter(dm.FDMemCidade).Get ;
+
+ end;
+ if lREsponse.StatusCode=403 then
+ begin
+    MessageDlg('Seu usuário não permissão para utilizar este recurso !', mtError,
+        [mbOK], 0);
+       ShowMessage(lREsponse.Content);
+ end
+ else
+ begin
+   colecao.Clear;
+   dm.FDMemCidade.First;
+  while not dm.FDMemCidade.Eof do
+   begin
+     cidade:=TCidade.Create;
+     cidade.codigo_cidade:= dm.FDMemCidadecodigo_cidade.Value;
+     cidade.codigoibge:= dm.FDMemCidadecodigoibge.Value;
+     cidade.cidadenome:= dm.FDMemCidadecidadenome.Value;
+     cidade.estado.nomestado:=dm.FDMemCidadeestadonomestado.Value;
+     cidade.estado.uf:=dm.FDMemCidadeestadouf.Value;
+     colecao.Add(cidade);
+     dm.FDMemCidade.Next;
+   end;
+ end;
+   Result:=colecao;
+end;
+
+function TDaoCidade.salvar(objeto: TCidade; usuario: TUsuarioComToken): string;
+begin
+
+end;
+
+end.

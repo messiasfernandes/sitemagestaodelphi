@@ -1,0 +1,16 @@
+program SistemaGestao;
+
+uses
+  Vcl.Forms,
+  SistemaGestao.View.FormPrincipal in 'SistemaGestao.View.FormPrincipal.pas' {Form1},
+  SistemaGestao.View.FormPardao in 'SistemaGestao.View.FormPardao.pas' {Form4};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm4, Form4);
+  Application.Run;
+end.

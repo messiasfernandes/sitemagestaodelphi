@@ -1,0 +1,83 @@
+unit SistemaGestao.Model.EntidadeBase;
+
+interface
+        type
+        TModelBase = class
+           private
+            Fcodigousuario: Integer;
+            Fcodigo: Integer;
+            Fdatacadastro: string;
+            FdataAlteracao: string;
+            procedure Setcodigo(const Value: Integer);
+            procedure Setcodigousuario(const Value: Integer);
+
+             { private declarations }
+           protected
+             { protected declarations }
+           public
+
+            constructor Create;
+            destructor Destroy; override;
+            property codigo : Integer  read Fcodigo write Setcodigo;
+            property codigousuario:Integer  read Fcodigousuario write Setcodigousuario;
+            function GetDataCadastro: TDateTime;
+            procedure SetDataCadastro (avalue : TDateTime);
+            function GetDataAlteracao: TDateTime;
+            procedure SetDataAlteracao (avalue : TDateTime);
+            property datacadastro :TDateTime read GetDataCadastro write SetDataCadastro;
+            property dataAlteracao: TDateTime read GetDataAlteracao write SetDataAlteracao ;
+            published
+             { published declarations }
+
+             end;
+implementation
+
+uses
+  System.SysUtils;
+
+{ TModelBase }
+
+constructor TModelBase.Create;
+begin
+   Fcodigo:=0;
+  datacadastro:=Date;
+  dataAlteracao:=Date;
+end;
+
+destructor TModelBase.Destroy;
+begin
+
+  inherited;
+end;
+
+function TModelBase.GetDataAlteracao: TDateTime;
+begin
+  Result:=StrToDateTime(FdataAlteracao);
+end;
+
+function TModelBase.GetDataCadastro: TDateTime;
+begin
+   Result:=StrToDateTime(Fdatacadastro);
+end;
+
+procedure TModelBase.Setcodigo(const Value: Integer);
+begin
+   Fcodigo := Value;
+end;
+
+procedure TModelBase.Setcodigousuario(const Value: Integer);
+begin
+   Fcodigousuario:= Value;
+end;
+
+procedure TModelBase.SetDataAlteracao(avalue: TDateTime);
+begin
+  FdataAlteracao:=FormatDateTime('DD/MM/YYYY',avalue);
+end;
+
+procedure TModelBase.SetDataCadastro(avalue: TDateTime);
+begin
+   Fdatacadastro:= FormatDateTime('DD/MM/YYYY',avalue);
+end;
+
+end.

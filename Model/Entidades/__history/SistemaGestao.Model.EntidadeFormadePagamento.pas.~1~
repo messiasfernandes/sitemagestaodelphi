@@ -1,0 +1,23 @@
+unit SistemaGestao.Model.EntidadeFormadePagamento;
+
+interface
+
+uses
+  Pkg.Json.DTO, System.Generics.Collections, REST.Json.Types;
+
+{$M+}
+
+type
+  TFormadePagmento = class(TJsonDTO)
+  private
+    FIdformapagamento: Integer;
+    FNomeforma: string;
+  published
+    property Idformapagamento: Integer read FIdformapagamento write FIdformapagamento;
+    property Nomeforma: string read FNomeforma write FNomeforma;
+  end;
+
+implementation
+
+end.
+

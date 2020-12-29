@@ -1,0 +1,182 @@
+unit SistemaGestao.Model.EntidadeContaapagar;
+
+interface
+     uses System.Generics.Collections,SistemaGestao.Model.EntidadeFornecedor,SistemaGestao.Model.EntidadeContaDetalhe,
+  SistemaGestao.Model.EntidadeFormadePagamento, System.JSON, REST.Json,System.SysUtils, System.StrUtils;
+        type TContasPagar = class
+             private
+
+    Fidconta: LongInt;
+    Ffornecedor: TFornecedor;
+
+    Fstatuspagmaento: string;
+    Fnumparcela: Integer;
+    FformadePagmamento: TFormadePagamento;
+
+    Fnumtitulo: LongInt;
+    Fvaloparcela: Currency;
+    Fvaloprago: Currency;
+    Fvalorapagar: Currency;
+    FidcocontaMovimento: LongInt;
+    FdataDePagamento: TDateTime;
+    Fdatavencimento: TDateTime;
+    Fdatalancamento: TDateTime;
+
+
+
+    procedure Setfornecedor(const Value: TFornecedor);
+    procedure Setidconta(const Value: LongInt);
+    procedure SetformadePagmamento(const Value: TFormadePagamento);
+    procedure Setnumparcela(const Value: Integer);
+    procedure Setnumtitulo(const Value: LongInt);
+    procedure Setstatuspagmaento(const Value: string);
+    procedure Setvaloparcela(const Value: Currency);
+    procedure Setvaloprago(const Value: Currency);
+    procedure Setvalorapagar(const Value: Currency);
+    procedure SetidcocontaMovimento(const Value: LongInt);
+    procedure SetdataDePagamento(const Value: TDateTime);
+
+    procedure Setdatavencimento(const Value: TDateTime);
+    procedure Setdatalancamento(const Value: TDateTime);
+
+             protected
+
+             public
+               constructor Create;
+               destructor Destroy; override;
+
+
+        property  idconta: LongInt read Fidconta write Setidconta;
+        property  datalancamento : TDateTime  read Fdatalancamento write Setdatalancamento;
+
+        property  fornecedor :TFornecedor read Ffornecedor write Setfornecedor;
+                 property  numtitulo :LongInt  read Fnumtitulo write Setnumtitulo;
+          property  numparcela :Integer read Fnumparcela write Setnumparcela;
+          property  valoparcela : Currency  read Fvaloparcela write Setvaloparcela;
+          property  valoprago : Currency  read Fvaloprago write Setvaloprago;
+          property  valorapagar: Currency  read Fvalorapagar write Setvalorapagar;
+          property  dataDePagamento :TDateTime read FdataDePagamento write SetdataDePagamento;
+          property  formadePagmamento: TFormadePagamento  read FformadePagmamento write SetformadePagmamento;
+          property  datavencimento: TDateTime read Fdatavencimento write Setdatavencimento;
+          property  statuspagmaento : string read Fstatuspagmaento write Setstatuspagmaento;
+          property idcocontaMovimento: LongInt read FidcocontaMovimento write SetidcocontaMovimento;
+         function deObjetoparaJson(json: TJSONObject):TJSONObject;
+             published
+
+             end;
+implementation
+
+{ ContasPagar }
+
+
+
+constructor TContasPagar.Create;
+begin
+   Ffornecedor:=TFornecedor.Create;
+   FformadePagmamento:=TFormadePagamento.Create;
+end;
+
+function TContasPagar.deObjetoparaJson(json: TJSONObject): TJSONObject;
+var jsonForma : TJSONObject;
+var dataVstring, datapagamento : string;
+begin
+       dataVstring:=(FormatDateTime('dd/mm/YYYY',datavencimento));
+       datapagamento:= FormatDateTime('dd/mm/YYYY',dataDePagamento);
+      jsonForma:=TJSONObject.Create;
+      json.AddPair('idconta', TJSONNumber.Create(idconta));
+      json.AddPair('numtitulo', TJSONNumber.Create(numtitulo));
+
+      json.AddPair('valoparcela', TJSONNumber.Create(valoparcela));
+      json.AddPair('valorapagar',TJSONNumber.Create(valorapagar) );
+      json.AddPair('numparcela', TJSONNumber.Create(numparcela));
+      json.AddPair('valoprago',TJSONNumber.Create(valoprago));
+
+   json.AddPair('dataDePagamento',datapagamento) ;
+
+     /// json.AddPair('idfonecedor', TJSONNumber.Create(fornecedor.codigo));
+  ///    json.AddPair('outrasdepesza',TJSONNumber.Create( outrasdepesza));
+      json.AddPair('statuspagmaento', statuspagmaento)  ;
+      jsonForma.AddPair('Idformapagamento', TJSONNumber.Create(formadePagmamento.Idformapagamento));
+      json.AddPair('formadePagmamento',jsonForma);
+
+      Result:=json;
+end;
+
+destructor TContasPagar.Destroy;
+begin
+  FformadePagmamento.Free;
+  Ffornecedor.Free;
+  inherited;
+end;
+
+
+
+
+procedure TContasPagar.SetdataDePagamento(const Value: TDateTime);
+begin
+  FdataDePagamento := Value;
+end;
+
+procedure TContasPagar.Setdatalancamento(const Value: TDateTime);
+begin
+  Fdatalancamento := Value;
+end;
+
+
+
+procedure TContasPagar.Setdatavencimento(const Value: TDateTime);
+begin
+  Fdatavencimento := Value;
+end;
+
+procedure TContasPagar.SetformadePagmamento(const Value: TFormadePagamento);
+begin
+  FformadePagmamento := Value;
+end;
+
+procedure TContasPagar.Setfornecedor(const Value: TFornecedor);
+begin
+  Ffornecedor := Value;
+end;
+
+procedure TContasPagar.SetidcocontaMovimento(const Value: LongInt);
+begin
+  FidcocontaMovimento := Value;
+end;
+
+procedure TContasPagar.Setidconta(const Value: LongInt);
+begin
+  Fidconta := Value;
+end;
+
+procedure TContasPagar.Setnumparcela(const Value: Integer);
+begin
+  Fnumparcela := Value;
+end;
+
+procedure TContasPagar.Setnumtitulo(const Value: LongInt);
+begin
+  Fnumtitulo := Value;
+end;
+
+procedure TContasPagar.Setstatuspagmaento(const Value: string);
+begin
+  Fstatuspagmaento := Value;
+end;
+
+procedure TContasPagar.Setvaloparcela(const Value: Currency);
+begin
+  Fvaloparcela := Value;
+end;
+
+procedure TContasPagar.Setvaloprago(const Value: Currency);
+begin
+  Fvaloprago := Value;
+end;
+
+procedure TContasPagar.Setvalorapagar(const Value: Currency);
+begin
+  Fvalorapagar := Value;
+end;
+
+end.

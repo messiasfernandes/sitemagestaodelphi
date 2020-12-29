@@ -1,0 +1,107 @@
+unit SistemaGestao.Contoller.ControllerFormadePagamento;
+
+interface
+        uses SistemaGestao.Model.IterfaceController,System.Generics.Collections,
+        SistemaGestao.Model.EntidadeFormadePagamento,SistemaGestao.Model.DaoFormdePagamento,
+        SistemaGestao.Model.IterfaceDao,SistemaGestao.Model.EntidadeUsuarioComToken;
+        type
+        TControllerFormadePagamento = class(TInterfacedObject,Icontroller<TFormadePagamento>)
+        private
+    Fobjeto: TFormadePagamento;
+    procedure Setobjeto(const Value: TFormadePagamento);
+
+          { private declarations }
+        protected
+          daoForma:Idao<TFormadePagamento>;
+          pUsuario:TUsuarioComToken;
+        public
+
+
+           function salvar:string;
+           function pesquisar (phave,ptipo:string):TFormadePagamento;
+           function carregar (objeto : TFormadePagamento;usuario:TUsuarioComToken):TFormadePagamento;
+          function buscarTodos(colecao: TObjectList<TFormadePagamento> ): TObjectList<TFormadePagamento>;
+           function carrega:TFormadePagamento ;
+           function pesquisa(colecaoObjeto: TObjectList<TFormadePagamento> ;phave,ptipo:string;usuario:TUsuarioComToken): TObjectList<TFormadePagamento>;
+           function Excluir(pId: integer;usuario:TUsuarioComToken):string;
+           property objeto: TFormadePagamento  read Fobjeto write Setobjeto;
+           function GetObjeto: TFormadePagamento;
+           constructor Create;
+           destructor Destroy;override;
+            procedure conhecaUsuario(usuario: TUsuarioComToken);
+        published
+          { published declarations }
+        end;
+implementation
+
+{ TControllerFormadePagmanto }
+
+function TControllerFormadePagamento.carregar(
+  objeto: TFormadePagamento;usuario:TUsuarioComToken): TFormadePagamento;
+begin
+
+end;
+
+procedure TControllerFormadePagamento.conhecaUsuario(usuario: TUsuarioComToken);
+begin
+   pUsuario:=usuario;
+end;
+
+function TControllerFormadePagamento.buscarTodos(
+  colecao: TObjectList<TFormadePagamento>): TObjectList<TFormadePagamento>;
+begin
+
+end;
+
+function TControllerFormadePagamento.carrega: TFormadePagamento;
+begin
+
+   Result:=daoForma.Carregar(objeto,pUsuario);
+end;
+
+constructor TControllerFormadePagamento.Create;
+begin
+   objeto:=TFormadePagamento.Create;
+   daoForma:=TDaoFormadePagmanto.Create;
+end;
+
+destructor TControllerFormadePagamento.Destroy;
+begin
+  objeto.Free;
+  inherited;
+end;
+
+function TControllerFormadePagamento.Excluir(pId: integer;usuario: TUsuarioComToken): string;
+begin
+
+end;
+
+function TControllerFormadePagamento.GetObjeto: TFormadePagamento;
+begin
+  Result:=Fobjeto;
+end;
+
+function TControllerFormadePagamento.pesquisa(
+  colecaoObjeto: TObjectList<TFormadePagamento>; phave,
+  ptipo: string;usuario: TUsuarioComToken): TObjectList<TFormadePagamento>;
+begin
+    Result:=daoForma.pesquisa(colecaoObjeto,phave,ptipo,usuario);
+end;
+
+function TControllerFormadePagamento.pesquisar(phave,
+  ptipo: string): TFormadePagamento;
+begin
+
+end;
+
+function TControllerFormadePagamento.salvar: string;
+begin
+
+end;
+
+procedure TControllerFormadePagamento.Setobjeto(const Value: TFormadePagamento);
+begin
+  Fobjeto := Value;
+end;
+
+end.

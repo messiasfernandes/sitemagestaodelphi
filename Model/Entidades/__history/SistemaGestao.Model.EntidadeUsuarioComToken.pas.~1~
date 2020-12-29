@@ -1,0 +1,27 @@
+unit SistemaGestao.Model.EntidadeUsuarioComToken;
+
+interface
+        uses SistemaGestao.Model.Entidade.UsuarioLogar;
+        type
+        TUsuarioComToken = class(TUsuarioLogar)
+        private
+    Ftoken: string;
+    procedure Settoken(const Value: string);
+
+        protected
+
+        public
+         property token:string read Ftoken write Settoken;
+        published
+
+        end;
+implementation
+
+{ TUsuarioComToken }
+
+procedure TUsuarioComToken.Settoken(const Value: string);
+begin
+  Ftoken := Value;
+end;
+
+end.

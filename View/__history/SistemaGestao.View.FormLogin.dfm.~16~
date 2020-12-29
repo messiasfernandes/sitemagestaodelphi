@@ -1,0 +1,183 @@
+object FrmLogin: TFrmLogin
+  Left = 0
+  Top = 0
+  BorderStyle = bsDialog
+  Caption = 'Login'
+  ClientHeight = 243
+  ClientWidth = 394
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object pnlLogin: TPanel
+    Left = 0
+    Top = 0
+    Width = 394
+    Height = 243
+    Align = alClient
+    Color = 4998718
+    ParentBackground = False
+    TabOrder = 0
+    ExplicitLeft = 8
+    ExplicitTop = 8
+    ExplicitWidth = 360
+    ExplicitHeight = 248
+    DesignSize = (
+      394
+      243)
+    object Label1: TLabel
+      Left = 20
+      Top = 35
+      Width = 31
+      Height = 13
+      Caption = 'Label1'
+      Visible = False
+    end
+    object edt_email: TEdit
+      Tag = 5
+      Left = 29
+      Top = 75
+      Width = 329
+      Height = 21
+      Hint = 'Email'
+      Anchors = [akTop, akRight]
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      TextHint = 'Usu'#225'rio'
+    end
+    object edt_senha: TEdit
+      Tag = 5
+      Left = 29
+      Top = 109
+      Width = 329
+      Height = 21
+      Hint = 'Ssnha'
+      Anchors = [akTop, akRight]
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+      PasswordChar = '*'
+      TabOrder = 1
+      TextHint = 'Senha'
+    end
+    object pnllogar: TPanel
+      Left = 140
+      Top = 150
+      Width = 102
+      Height = 48
+      Anchors = [akTop, akRight]
+      BevelOuter = bvNone
+      Color = 9260327
+      ParentBackground = False
+      TabOrder = 2
+      ExplicitLeft = 120
+      object btn_logar: TSpeedButton
+        Left = 0
+        Top = 0
+        Width = 102
+        Height = 48
+        Cursor = crHandPoint
+        Align = alClient
+        Caption = 'Logar'
+        Flat = True
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = btn_logarClick
+        OnMouseEnter = btn_logarMouseEnter
+        OnMouseLeave = btn_logarMouseLeave
+        ExplicitLeft = 40
+        ExplicitTop = 24
+        ExplicitWidth = 23
+        ExplicitHeight = 22
+      end
+    end
+    object pnlcancelar: TPanel
+      Left = 29
+      Top = 150
+      Width = 102
+      Height = 48
+      Anchors = [akTop, akRight]
+      BevelOuter = bvNone
+      Color = 3556340
+      ParentBackground = False
+      TabOrder = 3
+      ExplicitLeft = 9
+      object btn_cancelar: TSpeedButton
+        Left = 0
+        Top = 0
+        Width = 102
+        Height = 48
+        Cursor = crHandPoint
+        Align = alClient
+        Caption = 'Cancelar'
+        Flat = True
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = btn_cancelarClick
+        OnMouseEnter = btn_cancelarMouseEnter
+        OnMouseLeave = btn_cancelarMouseLeave
+        ExplicitLeft = 3
+      end
+    end
+    object pnl_mostarsenha: TPanel
+      Left = 256
+      Top = 150
+      Width = 102
+      Height = 48
+      Anchors = [akTop, akRight]
+      BevelOuter = bvNone
+      Color = clWhite
+      ParentBackground = False
+      TabOrder = 4
+      ExplicitLeft = 258
+      object btn_mostrasenha: TSpeedButton
+        Left = 0
+        Top = 0
+        Width = 102
+        Height = 48
+        Cursor = crHandPoint
+        Align = alClient
+        Caption = 'Mostrar Senha'
+        Flat = True
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clBlue
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = btn_mostrasenhaClick
+        OnMouseEnter = btn_mostrasenhaMouseEnter
+        OnMouseLeave = btn_mostrasenhaMouseLeave
+        ExplicitLeft = 32
+        ExplicitTop = 16
+        ExplicitWidth = 23
+        ExplicitHeight = 22
+      end
+    end
+  end
+end

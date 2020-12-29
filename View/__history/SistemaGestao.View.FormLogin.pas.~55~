@@ -1,0 +1,163 @@
+unit SistemaGestao.View.FormLogin;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, SistemaGestao.Model.Entidade.UsuarioLogar,
+  Vcl.WinXPanels,     SistemaGestao.Model.EntidadeUsuarioComToken, Vcl.Buttons,
+   SistemaGestao.Contoller.ControllerUsuarioLogar,
+    uValidacampos,
+   RESTRequest4D.Response,RESTRequest4D.Request;
+
+type
+  TFrmLogin = class(TForm)
+    Panel1: TPanel;
+    StackPanel1: TStackPanel;
+    StackPanel2: TStackPanel;
+    edt_email: TEdit;
+    edt_senha: TEdit;
+    btn_mostrasenha: TSpeedButton;
+    btn_logar: TSpeedButton;
+    btn_cancelar: TSpeedButton;
+    Label1: TLabel;
+    procedure btn_mostrasenhaClick(Sender: TObject);
+    procedure btn_cancelarClick(Sender: TObject);
+    procedure btn_logarClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    function ConhecausuarioLogado(pUsuario:TUsuarioComToken):TUsuarioComToken;
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+  private
+    controllerUsuarioLogar: TControllerUsuarioLogar;
+    status: integer;
+    token:string;
+    usuaario:TUsuarioComToken;
+ //   lResponse:IResponse;
+  public
+    { Public declarations }
+
+    procedure validou;
+    function logar:Integer;
+    procedure conhecaObjeto(pControllerUsuario: TControllerUsuarioLogar) ;
+  end;
+
+var
+  FrmLogin: TFrmLogin;
+
+implementation
+       uses
+  SistemaGestao.View.FormPrincipal;
+{$R *.dfm}
+
+procedure TFrmLogin.btn_mostrasenhaClick(Sender: TObject);
+begin
+  edt_senha.passwordchar:=#0;
+end;
+
+
+
+procedure TFrmLogin.conhecaObjeto(pControllerUsuario: TControllerUsuarioLogar);
+begin
+  controllerUsuarioLogar:=pControllerUsuario;
+end;
+
+function TFrmLogin.ConhecausuarioLogado(pUsuario:TUsuarioComToken):TUsuarioComToken;
+
+begin
+
+ pUsuario.funcionario.email:=edt_email.Text;
+ pUsuario.senha:=edt_senha.Text;
+ pUsuario.token:=token;
+
+ Result:=pUsuario;
+
+end;
+
+procedure TFrmLogin.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+   try
+
+
+ if  status = 200then
+    begin
+
+    // usuario.funcionario.cargo.codigo:=StrToInt(edt_usario.Text);
+
+    // controllerUsuario.Carregar(usuario);
+    // ShowMessage('Bem Vindo ' +  usuario.funcionario.nome_razaosocial + ' ao Sistema'  );
+    // FrmPrincipal.StatusBar1.Panels[3].Text:=usuario.funcionario.nome_razaosocial;
+    Validou;
+     end
+
+    else
+
+    begin
+      ShowMessage('Usuário ou senha em inválido ou clique em logar');
+
+      Action := caNone;
+    end
+
+
+  except
+    on E: Exception do
+      MessageDlg('Todos os campos precisam ser preechido !', mtError,
+        [mbOK], 0);
+  end;
+end;
+
+procedure TFrmLogin.FormCreate(Sender: TObject);
+begin
+   controllerUsuarioLogar:=TControllerUsuarioLogar.Create;
+   usuaario:=TUsuarioComToken.Create;
+end;
+
+procedure TFrmLogin.FormDestroy(Sender: TObject);
+begin
+  controllerUsuarioLogar.Free;
+  usuaario.Free;
+end;
+
+function TFrmLogin.logar:Integer;
+
+begin
+
+  validaCampos(Self);
+  begin
+    controllerUsuarioLogar.usuario.senha:=edt_senha.Text;
+    controllerUsuarioLogar.usuario.funcionario.email:=edt_email.Text;
+   status:=    controllerUsuarioLogar.acessar;
+
+  end;
+
+   if status=200 then
+   begin
+ /// token:=controllerUsuarioLogar.pegatoken(token);
+
+     label1.Caption:=CurrToStr(status);
+    validou;
+   end
+   else
+   begin
+      ShowMessage('usário inávalido');
+   end;
+  Result:=status
+
+end;
+
+procedure TFrmLogin.btn_logarClick(Sender: TObject);
+begin
+  logar;
+end;
+
+procedure TFrmLogin.validou;
+begin
+  Close;
+end;
+
+procedure TFrmLogin.btn_cancelarClick(Sender: TObject);
+begin
+  Application.Terminate;
+end;
+
+end.

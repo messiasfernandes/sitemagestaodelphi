@@ -1,0 +1,39 @@
+unit SistemaGestao.Model.ServicodeRelatorio;
+
+interface
+         uses RESTRequest4D.Request, DataSet.Serialize,
+         SistemaGestao.Model.DmConexaoEventos;
+         type
+         TServiceRelatorio = class(TObject)
+         private
+
+         protected
+
+         public
+           constructor Create;
+           destructor Destroy; override;
+
+         published
+           procedure relatorioEstque(pqte1,pqte2: string);
+         end;
+implementation
+
+{ TServiceRelatorio }
+
+constructor TServiceRelatorio.Create;
+begin
+
+end;
+
+destructor TServiceRelatorio.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TServiceRelatorio.relatorioEstque(pqte1, pqte2: string);
+begin
+
+end;
+
+end.

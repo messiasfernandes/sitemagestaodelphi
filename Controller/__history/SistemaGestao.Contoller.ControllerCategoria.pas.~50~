@@ -1,0 +1,79 @@
+unit SistemaGestao.Contoller.ControllerCategoria;
+
+interface
+         uses SistemaGestao.Contoller.ControllerPadrao,
+         SistemaGestao.Model.EntidadeCategoria,System.Generics.Collections,
+        SistemaGestao.Model.IterfaceDao, SistemaGestao.Model.DaoCategoria;
+         type
+         TControlerCategoria= class(TController<TCategoria>)
+         private
+        Fcategoria: Tcategoria;
+         daoCategoria: Idao<TCategoria> ;
+        procedure Setcategoria(const Value: Tcategoria);
+           { private declarations }
+         protected
+
+
+         public
+         function salvar: string;
+         function pesquisar(phave: string; ptipo: string): TCategoria; override;
+         procedure setDm(pdm: TObject); override;
+         function carregar: TCategoria; override;
+        function pesquisa(colecaoCategoria: TObjectList<TCategoria> ): TObjectList<TCategoria>;
+         property categoria:Tcategoria read Fcategoria write Setcategoria;
+         constructor Create;
+         destructor Destroy; override;
+
+                  published
+           { published declarations }
+         end;
+
+implementation
+
+uses
+  System.SysUtils;
+
+{ TControlerCategoria }
+
+function TControlerCategoria.carregar: TCategoria;
+begin
+ /// Result:=daoCategoria.Carregar(categoria);
+end;
+
+constructor TControlerCategoria.Create;
+begin
+    daoCategoria:=TDaoCategoria.Create;
+    Fcategoria:=TCategoria.Create;
+end;
+
+destructor TControlerCategoria.Destroy;
+begin
+  inherited;
+end;
+
+function TControlerCategoria.pesquisa(colecaoCategoria: TObjectList<TCategoria>
+  ): TObjectList<TCategoria>;
+begin
+  /// Result:=daoCategoria.pesquisa(colecaoCategoria);
+end;
+
+function TControlerCategoria.pesquisar(phave, ptipo: string): TCategoria;
+begin
+ // Fcategoria:=TCategoria.Create;
+
+ /// Result:=  daoCategoria.buscar(phave,ptipo);
+end;
+
+function TControlerCategoria.salvar: string;
+ begin
+    Result:= daoCategoria.salvar(Fcategoria);
+end;
+
+procedure TControlerCategoria.Setcategoria(const Value: Tcategoria);
+begin
+  Fcategoria := Value;
+end;
+
+
+
+end.

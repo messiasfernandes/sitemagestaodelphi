@@ -1,0 +1,190 @@
+
+
+unit SistemaGestao.Model.EntidadeCondicaoPagamento;
+
+interface
+uses Pkg.Json.DTO,System.Generics.Collections, uJSONUtil,System.JSON,
+SistemaGestao.Model.EntidadeParcelas, System.SysUtils,REST.Json,DBXJSON, DBXJSONReflect;
+       type TCondicaoPagmento = class(TJsonDTO)
+            private
+
+    Fidcondicao: Integer;
+    Fdescricao: string;
+    Fcolecaoparcelas: TObjectList<TParcelas>;
+    Fqtdeparcelas: Integer;
+    Fpercetualtotal: Currency;
+    procedure Setcolecaoparcelas(const Value: TObjectList<TParcelas>);
+    procedure Setdescricao(const Value: string);
+    procedure Setidcondicao(const Value: Integer);
+    procedure Setqtdeparcelas(const Value: Integer);
+    procedure Setpercetualtotal(const Value: Currency);
+
+              { private declarations }
+            protected
+              { protected declarations }
+              numParcela: Integer;
+              totalp: Currency;
+            public
+            destructor Destroy; override;
+            constructor Create;
+            property idcondicao: Integer read Fidcondicao write Setidcondicao;
+            property descricao :string read Fdescricao write Setdescricao;
+            property qtdeparcelas :Integer read Fqtdeparcelas write Setqtdeparcelas;
+            property colecaoparcelas:TObjectList<TParcelas>  read Fcolecaoparcelas write Setcolecaoparcelas;
+            function addParcela(pDias, pQtdeParcelas: Integer;codigofoma:Integer;nomedaforma:string): TObjectList<TParcelas>;
+            function addParcelaManual(pDias, pQtdeParcelas: Integer; percetual: Currency ;codigofoma:Integer;nomedaforma:string): TObjectList<TParcelas>;
+            function incparcelas:Integer;
+            property percetualtotal: Currency read Fpercetualtotal write Setpercetualtotal;
+            function TotalPercentual(ptotal: Currency): Currency;
+            function removeparcelas: TObjectList<TParcelas> ;
+            published
+              { published declarations }
+            end;
+implementation
+
+{ TCondicaoPagmento }
+
+function TCondicaoPagmento.addParcela(
+  pDias,
+  pQtdeParcelas: Integer;codigofoma:Integer;nomedaforma:string): TObjectList<TParcelas>;
+  var parcelas: TParcelas; I:Integer;
+  Somapercentual: Currency;
+  parcelaAual:Integer ;
+  ultimaparcela:string;
+  oparcela:string;
+
+begin
+
+     Somapercentual:=0;
+    for I := 0 to Pred(pQtdeParcelas) do
+      begin
+         parcelaAual:=I+1;
+        parcelas:=TParcelas.Create;
+        parcelas.numeroparcela:=I+1;
+        oparcela:=FormatCurr('###,##0.00',100/pQtdeParcelas);
+         parcelas.percentual:=StrToCurr(oparcela);
+        parcelas.dia:= (pDias div pQtdeParcelas)* parcelas.numeroparcela;
+
+         parcelas.formadePagamento.Idformapagamento:= codigofoma;
+       parcelas.formadePagamento.Nomeforma:=nomedaforma;
+       if pQtdeParcelas=parcelaAual then
+       begin
+        parcelas.totalpercentual:=100-Somapercentual;
+         ultimaparcela:=(FormatCurr('###,##0.00',parcelas.totalpercentual));
+        parcelas.percentual:=StrToCurr(ultimaparcela);
+       end;
+       Somapercentual:=Somapercentual+parcelas.percentual;
+       TotalPercentual(Somapercentual);
+       colecaoParcelas.Insert(I,parcelas);
+      end;
+      Result:=colecaoparcelas;
+end;
+
+function TCondicaoPagmento.addParcelaManual(pDias, pQtdeParcelas: Integer;
+  percetual: Currency; codigofoma: Integer;
+  nomedaforma: string): TObjectList<TParcelas>;
+   var parcelas: TParcelas;
+  Somapercentual: Currency;
+   ultimaposicao,ultimodiaadiconado: Integer;
+  ultimaparcela:string;
+  oparcela:string;
+begin
+     ultimodiaadiconado:=0;
+     if colecaoparcelas.Count>0 then
+     begin
+       ultimaposicao:= Pred( colecaoparcelas.Count);
+        ultimodiaadiconado:= colecaoparcelas.Items[ultimaposicao].dia;
+     end;
+    if ultimodiaadiconado >0 then
+    begin
+    if pDias <= ultimodiaadiconado then
+    begin
+      raise Exception.Create('dias não pode ser  menor que dias da parcela anterior ');
+    end  ;
+    end
+    else
+    begin
+
+   parcelas:= TParcelas.Create;
+   numParcela:=incparcelas;
+
+   parcelas.numeroparcela:=numParcela;
+   parcelas.dia:=pDias;
+   oparcela:=FormatCurr('###,##0.00',percetual);
+   parcelas.percentual:=StrToCurr(oparcela);
+   parcelas.formadePagamento.Idformapagamento:=codigofoma;
+   parcelas.formadePagamento.Nomeforma:=nomedaforma;
+   Somapercentual:=percetual ;
+   colecaoparcelas.Add(parcelas);
+   TotalPercentual(Somapercentual);
+    end;
+   Result:=colecaoparcelas;
+end;
+
+constructor TCondicaoPagmento.Create;
+begin
+    numParcela:=0;
+    totalp:=0;
+    colecaoparcelas:=TObjectList<TParcelas>.Create;
+end;
+
+destructor TCondicaoPagmento.Destroy;
+begin
+     colecaoparcelas.Free;
+  inherited;
+end;
+
+
+
+function TCondicaoPagmento.incparcelas: Integer;
+begin
+   Result:=numParcela+1;
+end;
+
+function TCondicaoPagmento.removeparcelas: TObjectList<TParcelas>;
+var posicaoparcela:Integer;
+begin
+    posicaoparcela:=Pred( colecaoparcelas.Count );
+    colecaoparcelas.Items[posicaoparcela].numeroparcela:=colecaoparcelas.Items[posicaoparcela].numeroparcela-1;
+    percetualtotal:=percetualtotal-colecaoparcelas.Items[posicaoparcela].percentual;
+    colecaoparcelas.Delete(posicaoparcela);
+    Result:=colecaoparcelas;
+end;
+
+procedure TCondicaoPagmento.Setcolecaoparcelas(
+  const Value: TObjectList<TParcelas>);
+begin
+  Fcolecaoparcelas := Value;
+end;
+
+procedure TCondicaoPagmento.Setdescricao(const Value: string);
+begin
+  Fdescricao := Value;
+end;
+
+procedure TCondicaoPagmento.Setidcondicao(const Value: Integer);
+begin
+  Fidcondicao := Value;
+end;
+
+
+
+procedure TCondicaoPagmento.Setpercetualtotal(const Value: Currency);
+begin
+  Fpercetualtotal := Value;
+end;
+
+procedure TCondicaoPagmento.Setqtdeparcelas(const Value: Integer);
+begin
+  Fqtdeparcelas := Value;
+end;
+
+
+
+function TCondicaoPagmento.TotalPercentual(ptotal: Currency): Currency;
+begin
+   percetualtotal:=percetualtotal+ptotal;
+   Result:=    percetualtotal;
+end;
+
+end.

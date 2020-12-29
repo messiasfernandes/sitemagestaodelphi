@@ -1,0 +1,28 @@
+unit SistemaGestao.View.FormCidade;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, SistemaGestao.View.FormModelo,
+  Data.Bind.EngExt, Vcl.Bind.DBEngExt, Vcl.ComCtrls, Data.Bind.Components,
+  Data.Bind.ObjectScope, Vcl.Mask, Vcl.Buttons, Vcl.StdCtrls, Vcl.WinXCtrls,
+  Vcl.ExtCtrls;
+
+type
+  TFrmModelo2 = class(TFrmModelo)
+    ListView1: TListView;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  FrmModelo2: TFrmModelo2;
+
+implementation
+
+{$R *.dfm}
+
+end.

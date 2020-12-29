@@ -1,0 +1,509 @@
+unit SistemaGestao.View.FormProdutos;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, SistemaGestao.View.FormModelo, uValidacampos,
+  SistemaGestao.Model.IterfaceController, SistemaGestao.Model.EntidadeProduto, SistemaGestao.Model.EntidadeCategoria,
+  SistemaGestao.Contoller.ControllerProduto ,uFormatacoes,SistemaGestao.Model.EntidadeUsuarioComToken,
+
+  Data.Bind.EngExt, Vcl.Bind.DBEngExt, Data.Bind.Components, System.Generics.Collections ,
+  Data.Bind.ObjectScope, Vcl.Mask, Vcl.Buttons, Vcl.StdCtrls, Vcl.WinXCtrls,
+  Vcl.ExtCtrls, Vcl.ComCtrls,utipoProduto,SistemaGestao.View.FormCategoria,
+   SistemaGestao.Contoller.ControllerCategorias, System.ImageList, Vcl.ImgList;
+
+type
+  TFrmProduto = class(TFrmModelo)
+    ListView1: TListView;
+    RadioButton1: TRadioButton;
+    edt_nomeproduto: TEdit;
+    edt_preco_venda: TEdit;
+    chativo: TCheckBox;
+    ComboBox1: TComboBox;
+    edt_precocompra: TEdit;
+    edt_codigo_ean: TEdit;
+    edt_data_ulimacompra: TEdit;
+    edt_unidade: TEdit;
+    edt_custo_medio: TEdit;
+    edt_marca: TEdit;
+    edt_categoria: TEdit;
+    edt_qtde: TEdit;
+    Label1: TLabel;
+    Label3: TLabel;
+    RadioButton2: TRadioButton;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    edt_codigo_fabrincate: TEdit;
+    Label10: TLabel;
+    Label11: TLabel;
+    Label12: TLabel;
+    Label13: TLabel;
+    Label14: TLabel;
+    Label15: TLabel;
+    Label16: TLabel;
+    edt_peso: TEdit;
+    Label17: TLabel;
+    pnlpesquisa: TPanel;
+    edt_codigo_categoria: TEdit;
+    btn_pesquisacat: TSpeedButton;
+    procedure FormDestroy(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure RadioButton1Click(Sender: TObject);
+    procedure edt_preco_vendaChange(Sender: TObject);
+    procedure edt_codigo_categoriaInvokeSearch(Sender: TObject);
+    procedure edt_precocompraChange(Sender: TObject);
+    procedure edt_qtdeChange(Sender: TObject);
+    procedure edt_data_ulimacompraChange(Sender: TObject);
+    procedure edt_codigo_categoriaKeyPress(Sender: TObject; var Key: Char);
+    procedure RadioButton2Click(Sender: TObject);
+    procedure edt_custo_medioChange(Sender: TObject);
+    procedure edt_pesoChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure btn_pesquisacatClick(Sender: TObject);
+    procedure ListView1AdvancedCustomDrawItem(Sender: TCustomListView;
+      Item: TListItem; State: TCustomDrawState; Stage: TCustomDrawStage;
+      var DefaultDraw: Boolean);
+
+  private
+  controlerProduto:Icontroller<TProduto>;
+  lista: TObjectList<TProduto>;
+  controllerCategoria:Icontroller<TCategoria>;
+  public
+    procedure pesquisar; override;
+    procedure Carregalistiview;
+    procedure editar; override;
+    procedure carregaedit; override;
+    procedure pesquisarcategoria;
+    procedure pesquisarCategoriaporId;
+    procedure conhecaUsuario(usarioToken: TUsuarioComToken); override;
+    procedure inicializar; override;
+    procedure salvar; override;
+    procedure excluir; override;
+    procedure limpaedit; override;
+    procedure BloqueiaEdit; override;
+    procedure DesbloqueiaEdit; override;
+
+
+   procedure converter  ;
+    procedure carregaricones; override;
+  end;
+
+var
+  FrmProduto: TFrmProduto;
+
+implementation
+
+uses
+  Vcl.Themes;
+
+{$R *.dfm}
+
+{ TFrmProduto }
+
+procedure TFrmProduto.BloqueiaEdit;
+begin
+edt_codigo_categoria.Enabled:=False;
+ chativo.Enabled:=False;
+  inherited;
+
+end;
+
+procedure TFrmProduto.btn_pesquisacatClick(Sender: TObject);
+begin
+  inherited;
+   pesquisarcategoria;
+end;
+
+procedure TFrmProduto.carregaedit;
+begin
+  inherited;
+  edt_codigo.Text:=controlerProduto.objeto.idproduto.ToString;
+  edt_nomeproduto.Text:=controlerProduto.objeto.nomeproduto;
+  edt_preco_venda.Text:=(FormatCurr('###,##0.00',(controlerProduto.objeto.precodevenda)));
+  edt_precocompra.Text:=(FormatCurr('###,##0.00',(controlerProduto.objeto.precocusto)));
+  edt_custo_medio.Text:=(FormatCurr('###,##0.00', (controlerProduto.objeto.customedio)));
+    edt_qtde.Text:=(FormatCurr('###,##0.00', (controlerProduto.objeto.qteestoque)));
+  edt_codigo_categoria.Text:=controlerProduto.objeto.categoria.IdCategoria.ToString;
+  edt_categoria.Text:=controlerProduto.objeto.categoria.Nomecategoria;
+  edt_marca.Text:=controlerProduto.objeto.marca;
+  edt_data_ulimacompra.Text:=DateToStr(controlerProduto.objeto.dataultimacmpra)    ;
+  chativo.Checked:=controlerProduto.objeto.ativo;
+  edt_codigo_ean.Text:=controlerProduto.objeto.codigoEan13;
+  edt_codigo_fabrincate.Text:=controlerProduto.objeto.codigofabricante;
+  edt_peso.Text:=(FormatCurr('#,##0.000', controlerProduto.objeto.peso));
+
+  edt_unidade.Text:=controlerProduto.objeto.unidede;
+ if controlerProduto.objeto.tipoproduto.Equals('FISÍCO') then
+ begin
+   ComboBox1.ItemIndex:=Ord(TTipoProduto.FISÍCO)  ;
+ end;
+   if controlerProduto.objeto.tipoproduto.Equals('SERVIÇO') then
+ begin
+   ComboBox1.ItemIndex:=Ord(TTipoProduto.SERVIÇO)  ;
+ end;
+
+   if controlerProduto.objeto.tipoproduto.Equals('DIGITAL') then
+ begin
+   ComboBox1.ItemIndex:=Ord(TTipoProduto.DIGITAL)  ;
+ end;
+
+end;
+
+procedure TFrmProduto.Carregalistiview;
+var I  : Integer;
+ iten: TListItem;
+
+begin
+
+    Self.ListView1.Clear;
+ 
+   for I := 0 to Pred( lista.Count) do
+   begin
+
+      iten := ListView1.Items.Add();
+       iten.Caption :=lista.Items[I].idproduto.ToString;
+
+     iten.SubItems.Add(lista.Items[I].nomeproduto);
+
+     iten.SubItems.Add(FormatCurr('###,##0.00  ', (lista.Items[I].precodevenda)));
+     iten.SubItems.Add(FormatCurr('#,##0.000 ', (lista.Items[I].qteestoque)));
+
+     iten.SubItems.Add(lista.Items[I].categoria.Nomecategoria);
+     iten.SubItems.Add(lista.Items[I].marca);
+     iten.SubItems.Add(lista.Items[I].unidede);
+
+
+
+   end;
+end;
+
+procedure TFrmProduto.carregaricones;
+begin
+  ImageList1.GetBitmap(7,btn_pesquisacat.Glyph);
+  inherited;
+
+end;
+
+procedure TFrmProduto.conhecaUsuario(usarioToken: TUsuarioComToken);
+begin
+  inherited;
+  controlerProduto.conhecaUsuario(usarioToken);
+end;
+
+procedure TFrmProduto.converter;
+begin
+  
+end;
+
+procedure TFrmProduto.DesbloqueiaEdit;
+begin
+edt_codigo_categoria.Enabled:=True;
+ chativo.Enabled:=True;;
+  inherited;
+
+end;
+
+procedure TFrmProduto.editar;
+begin
+  inherited;
+  controlerProduto.objeto.idproduto:= StrToInt(ListView1.Selected.Caption);
+  controlerProduto.carrega;
+   carregaedit
+end;
+
+procedure TFrmProduto.edt_codigo_categoriaInvokeSearch(Sender: TObject);
+begin
+  inherited;
+  pesquisarcategoria;
+end;
+
+procedure TFrmProduto.edt_codigo_categoriaKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+ if key = #13 then
+ begin
+   pesquisarCategoriaporId;
+   key:=#0;
+ end;
+
+end;
+
+procedure TFrmProduto.edt_custo_medioChange(Sender: TObject);
+begin
+  inherited;
+   Formatar(edt_custo_medio, TFormato.Valor);
+end;
+
+procedure TFrmProduto.edt_data_ulimacompraChange(Sender: TObject);
+begin
+  inherited;
+ Formatar(edt_data_ulimacompra, TFormato.Dt);
+end;
+
+procedure TFrmProduto.edt_pesoChange(Sender: TObject);
+begin
+  inherited;
+  Formatar(edt_peso, TFormato.Peso);
+end;
+
+procedure TFrmProduto.edt_precocompraChange(Sender: TObject);
+begin
+  inherited;
+  Formatar(edt_precocompra, TFormato.Valor);
+end;
+
+procedure TFrmProduto.edt_preco_vendaChange(Sender: TObject);
+begin
+  inherited;
+   Formatar(edt_preco_venda, TFormato.Valor);
+end;
+
+procedure TFrmProduto.edt_qtdeChange(Sender: TObject);
+begin
+  inherited;
+
+
+  Formatar(edt_qtde, TFormato.Valor);
+end;
+
+procedure TFrmProduto.excluir;
+begin
+  inherited;
+     try
+     controlerProduto.objeto.idproduto:=StrToInt(ListView1.Selected.Caption);
+  controlerProduto.carrega;
+  carregaedit;
+
+  BloqueiaEdit;
+  mbotao:= btn_salvar.Caption ;
+  btn_salvar.Caption:='&Excluir';
+  except on E: Exception do
+
+
+  begin
+  voltar  ;
+  raise Exception.Create('É necessário selecionar uma linha da tabela');
+
+  end;
+
+
+  end;
+end;
+
+procedure TFrmProduto.FormCreate(Sender: TObject);
+begin
+  inherited;
+  lista:=TObjectList<TProduto>.Create;
+  controlerProduto:=TControllerProduto.Create;
+end;
+
+procedure TFrmProduto.FormDestroy(Sender: TObject);
+begin
+  inherited;
+   lista.Free;
+end;
+
+procedure TFrmProduto.FormShow(Sender: TObject);
+begin
+
+  inherited;
+ carregaricones;
+end;
+
+procedure TFrmProduto.inicializar;
+begin
+  carregacombox(ComboBox1);
+  inherited;
+
+end;
+
+procedure TFrmProduto.limpaedit;
+begin
+ edt_codigo_categoria.Clear;
+ chativo.Checked:=False;
+  inherited;
+
+end;
+
+procedure TFrmProduto.ListView1AdvancedCustomDrawItem(Sender: TCustomListView;
+  Item: TListItem; State: TCustomDrawState; Stage: TCustomDrawStage;
+  var DefaultDraw: Boolean);
+var data1,data2: TDateTime;
+    rt, r: TRect;
+  s: String;
+  i: Integer;
+  c:TCanvas;
+
+  // Fit the rect used for TextRect
+  Procedure PrepareTextRect;
+  begin
+    rt := r;
+    rt.Left := rt.Left + 5;
+    rt.Top := rt.Top + 1;
+  end;
+begin
+
+   c := Sender.Canvas;
+  if (cdsSelected in State) then
+  begin
+    c.Brush.Color := $008D4D27;
+    c.Font.Color := clWhite;
+    // will get the rect for Item + Subitems in ViewStyle = vsReport
+    r := Item.DisplayRect(drBounds);
+    c.FillRect(r);
+    // set width to get fitting rt for tfEndEllipsis
+    r.Right := r.Left +   TListView(Sender).Columns[0].Width;
+    s := Item.Caption;
+   // PrepareTextRect;
+    c.TextRect(rt, s, [tfSingleLine, tfEndEllipsis]);
+
+    if TListView(Sender).ViewStyle = vsReport then
+    begin // Paint the Subitems if ViewStyle = vsReport
+
+                      ;
+      for i := 0 to Item.SubItems.Count - 1 do
+
+      begin
+
+        r.Left := r.Left + TListView(Sender).Columns.Items[i].Width ;
+        r.Right := r.Left + TListView(Sender).Columns.Items[i+1].Width;
+
+      //  PrepareTextRect;
+
+        s := Item.SubItems[i];
+        c.TextRect(rt, s, [tfSingleLine, tfEndEllipsis]);
+      end;
+    end;
+    DefaultDraw := false;
+
+    end;
+end;
+
+procedure TFrmProduto.pesquisar;
+begin
+  inherited;
+       tipo:='';
+      if rdCodigo.Checked then
+      begin
+         tipo:='&Código';
+
+      end ;
+      if RadioButton1.Checked then
+      begin
+        tipo:='C&ategorias';
+      end;
+      if RadioButton2.Checked then
+      begin
+        tipo:='&QteTenha';
+      end;
+
+           lista:=controlerProduto.pesquisa(lista,edt_chave.Text,tipo,pUsuario);
+
+ Carregalistiview;
+ rdCodigo.Checked:=False;
+ RadioButton1.Checked:=False;
+ RadioButton2.Checked:=False;
+ edt_chave.Clear;
+end;
+
+procedure TFrmProduto.pesquisarcategoria;
+var ofrmcategoria: TFrmCategoria;
+begin
+    ofrmcategoria := TFrmCategoria.Create(nil);
+    controllerCategoria:=TControllerCategorias.Create;
+    ofrmcategoria.conhecaUsuario(pUsuario);
+    controllerCategoria.conhecaUsuario(pUsuario);
+    try
+        mbotao:=ofrmcategoria.btn_fechar.Caption;
+      ofrmcategoria.btn_fechar.Caption:='&Selecionar';
+     ofrmcategoria.pesquisar;
+      ofrmcategoria.abriform;
+      controllerCategoria.objeto.IdCategoria:=
+      StrToInt(ofrmcategoria.ListView1.Selected.Caption);
+      controllerCategoria.carrega;
+      edt_codigo_categoria.Text    :=controllerCategoria.objeto.IdCategoria.ToString ;
+      edt_categoria.Text := controllerCategoria.objeto.Nomecategoria;
+
+      ofrmcategoria.btn_fechar.Caption:=mbotao;
+    finally
+      ofrmcategoria.Free;
+    end;
+end;
+
+procedure TFrmProduto.pesquisarCategoriaporId;
+begin
+    controllerCategoria:=TControllerCategorias.Create;
+    controllerCategoria.objeto.IdCategoria:=StrToInt(edt_codigo_categoria.Text);
+    controllerCategoria.conhecaUsuario(pUsuario);
+    controllerCategoria.carrega;
+     edt_codigo_categoria.Text    :=controllerCategoria.objeto.IdCategoria.ToString ;
+      edt_categoria.Text := controllerCategoria.objeto.Nomecategoria;
+end;
+
+procedure TFrmProduto.RadioButton1Click(Sender: TObject);
+begin
+  inherited;
+    pesquisar;
+end;
+
+procedure TFrmProduto.RadioButton2Click(Sender: TObject);
+begin
+  inherited;
+   pesquisar;
+end;
+
+
+
+procedure TFrmProduto.salvar;
+
+begin
+  inherited;
+         if (Self.btn_Salvar.Caption = '&Excluir') then
+  begin
+    if Application.MessageBox('DESEJA EXCLUIR ?', 'ATENÇÃO !!!  ',
+      MB_ICONWARNING + MB_YESNO) = ID_YES then
+      controlerProduto.Excluir(controlerProduto.objeto.idproduto,pUsuario);
+      pesquisar;
+      Self.voltar;
+  end
+  else
+     if (Self.btn_Salvar.Caption = '&Salvar') then
+   begin
+   validaCampos(Self);
+    with controlerProduto do
+    begin
+       objeto.idproduto:= StrToInt( edt_codigo.Text);
+     objeto.categoria.Nomecategoria:= edt_categoria.Text;
+     objeto.categoria.IdCategoria:=StrToInt(edt_codigo_categoria.Text);
+     objeto.nomeproduto:=edt_nomeproduto.Text;
+     objeto.precocusto:=  StrToCurrDef(StringReplace(edt_precocompra.Text, '.', '', [rfReplaceAll]), 0);
+    objeto.precodevenda:=   StrToCurrDef(StringReplace(edt_preco_venda.Text, '.', '', [rfReplaceAll]), 0);
+    objeto.qteestoque:=StrToCurrDef(StringReplace(edt_qtde.Text, '.', '', [rfReplaceAll]), 2);
+     objeto.ativo:=chativo.Checked;
+     objeto.codigofabricante:=edt_codigo_fabrincate.Text;
+     objeto.customedio:= StrToCurrDef(StringReplace(edt_custo_medio.Text, '.', '', [rfReplaceAll]), 0);
+     objeto.unidede:=edt_unidade.Text;
+     objeto.codigoEan13:=edt_codigo_ean.Text;
+      objeto.dataultimacmpra:=StrToDateTime(  edt_data_ulimacompra.Text);
+      objeto.peso:=StrToCurrDef(StringReplace(edt_peso.Text, '.', '', [rfReplaceAll]), 0);
+    objeto.marca:=edt_marca.Text;
+     objeto.tipoproduto:=TTipoProduto.FISÍCO.
+    Getvalue(ComboBox1.ItemIndex) ;
+
+
+salvar;
+ limpaedit;
+  pesquisar  ;
+   voltar;
+    end;
+   end;
+end;
+
+
+
+end.

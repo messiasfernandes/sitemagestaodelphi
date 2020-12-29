@@ -1,0 +1,59 @@
+inherited FrmCidade: TFrmCidade
+  Caption = 'Forml'#225'rio Cidade'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Pageprincipal: TPageControl
+    inherited Tabconsulta: TTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 25
+      ExplicitWidth = 753
+      ExplicitHeight = 440
+      inherited Panel3: TPanel
+        Padding.Left = 4
+        Padding.Top = 10
+        Padding.Right = 4
+        Padding.Bottom = 10
+        object ListView1: TListView
+          Left = 4
+          Top = 10
+          Width = 745
+          Height = 274
+          Align = alClient
+          BevelInner = bvNone
+          BevelOuter = bvNone
+          Columns = <
+            item
+              Caption = 'C'#243'digo'
+              Width = 80
+            end
+            item
+              Caption = 'C'#243'digo Ibge'
+              Width = 100
+            end
+            item
+              Caption = 'Nome da Cidade'
+              Width = 380
+            end
+            item
+              Caption = 'Estado'
+              Width = 130
+            end
+            item
+              Caption = 'Uf'
+            end>
+          GridLines = True
+          ReadOnly = True
+          RowSelect = True
+          TabOrder = 0
+          ViewStyle = vsReport
+        end
+      end
+    end
+    inherited tabcadastro: TTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 25
+      ExplicitWidth = 753
+      ExplicitHeight = 440
+    end
+  end
+end

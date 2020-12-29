@@ -1,0 +1,16 @@
+unit SistemaGestao.Model.IterfaceDao;
+
+interface
+uses System.Generics.Collections,SistemaGestao.Model.EntidadeUsuarioComToken;
+        TYPE
+        Idao <T:class> = interface
+          ['{F48ABE8C-9CBB-457E-9F0E-5027BF5AF023}']
+         function salvar (objeto:T):string;
+         function Carregar(objeto: T; usariocomToken:TUsuarioComToken): T;
+         function Excluir (pid:integer;usariocomToken:TUsuarioComToken):string;
+         function pesquisa(colecao: TObjectList<T>;pchave,ptipo:string;usariocomToken:TUsuarioComToken ): TObjectList<T>;
+         function buscarTodos(colecao: TObjectList<T>;usariocomToken:TUsuarioComToken ): TObjectList<T>;
+        end;
+implementation
+
+end.

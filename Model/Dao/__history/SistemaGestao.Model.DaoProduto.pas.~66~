@@ -1,0 +1,311 @@
+unit SistemaGestao.Model.DaoProduto;
+
+interface
+        uses SistemaGestao.Model.EntidadeProduto, SistemaGestao.Model.DmConexaoEventos,
+         SistemaGestao.Model.IterfaceDao, Vcl.Dialogs, System.SysUtils, REST.Json, System.JSON,
+        RESTRequest4D.Request, SistemaGestao.Model.EntidadeUsuarioComToken,
+        System.Generics.Collections,
+         DataSet.Serialize, RESTRequest4D.Response ;
+         type
+         TDAOProduto = class(TInterfacedObject, Idao<TProduto>)
+         private
+             dm: TDataEventos;
+             lREsponse:IResponse;
+             jsonObj:TJSONObject;
+         protected
+
+         public
+           constructor Create;
+           destructor Destroy; override;
+               function salvar (objeto:TProduto;usuario:TUsuarioComToken):string;
+         function Carregar(objeto: TProduto;usuario:TUsuarioComToken): TProduto;
+         function Excluir (pid:integer;usuario:TUsuarioComToken):string;
+         function pesquisa(colecao: TObjectList<TProduto>;pchave,ptipo:string ;usuario:TUsuarioComToken): TObjectList<TProduto>;
+         function buscar(objeto:TProduto;usuario:TUsuarioComToken):TProduto;
+         published
+
+         end;
+implementation
+
+{ TDAOProduto }
+
+function TDAOProduto.buscar(objeto: TProduto; usuario: TUsuarioComToken): TProduto;
+
+begin
+    lREsponse:=   TRequest.New.BaseURL('http://192.168.1.3:8080/' ).
+   AcceptCharset ('application/json').
+          Resource( 'produtos/codigo-fabricante').
+      BasicAuthentication(usuario.funcionario.email,usuario.senha).
+
+     AddParam('codigofabricante',objeto.codigofabricante).
+      DataSetAdapter(dm.FDMemTableProduto).Get;
+         if lResponse.StatusCode=404 then
+   begin
+  ///   ShowMessage('Registro não encontradrror Message') ;
+   end
+   else
+   begin
+     objeto.idproduto:= StrToInt( dm.FDMemTableProdutoidproduto.Value);
+     objeto.categoria.Nomecategoria:= dm.FDMemTableProdutocategorianomecategoria.Value;
+     objeto.categoria.IdCategoria:=StrToInt(dm.FDMemTableProdutocategoriaidCategoria.Value);
+     objeto.nomeproduto:=dm.FDMemTableProdutonomeproduto.Value;
+     objeto.precocusto:= StrToCurr( dm.FDMemTableProdutoprecocusto.Value);
+     objeto.precodevenda:= StrToCurr( dm.FDMemTableProdutoprecodevenda.Value);
+     objeto.qteestoque:=StrToCurr(dm.FDMemTableProdutoqteestoque.Value) ;
+     objeto.ativo:=StrToBool(dm.FDMemTableProdutoativo.Value);
+     objeto.customedio:=StrToCurr(dm.FDMemTableProdutocustomedio.Value);
+     objeto.tipoproduto:=dm.FDMemTableProdutotipoproduto.Value;
+     objeto.unidede:=dm.FDMemTableProdutounidede.Value;
+     objeto.codigofabricante:=dm.FDMemTableProdutocodigofabricante.Value;
+     objeto.codigoEan13:=dm.FDMemTableProdutocodigoEan13.Value;
+     objeto.peso:=StrToCurr( dm.FDMemTableProdutopeso.Value);
+     objeto.ultiMocusto_pago:=StrToCurr(dm.FDMemTableProdutoultiMocusto_pago.Value);
+   if dm.FDMemTableProdutodataultimacmpra.Value<>'' then
+     begin
+     objeto.dataultimacmpra:=StrToDateTime(dm.FDMemTableProdutodataultimacmpra.Value);
+
+     end;
+    objeto.marca:=dm.FDMemTableProdutomarca.Value;
+
+
+
+//    jsonObj := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(jsonstring), 0) as TJSONObject;
+//   objeto  :=TJson.JsonToObject<TProduto>(jsonObj);
+   end;
+
+
+    Result:=objeto ;
+
+end;
+
+
+
+function TDAOProduto.Carregar(objeto: TProduto;
+  usuario: TUsuarioComToken): TProduto;
+
+begin
+     lREsponse:=   TRequest.New.BaseURL('http://192.168.1.3:8080/' ).
+   AcceptCharset ('application/json').
+          Resource( '/produtos/'+objeto.idproduto.ToString).
+      BasicAuthentication(usuario.funcionario.email,usuario.senha).
+
+     DataSetAdapter(dm.FDMemTableProduto).Get;
+     objeto.idproduto:= StrToInt( dm.FDMemTableProdutoidproduto.Value);
+     objeto.categoria.Nomecategoria:= dm.FDMemTableProdutocategorianomecategoria.Value;
+     objeto.categoria.IdCategoria:=StrToInt(dm.FDMemTableProdutocategoriaidCategoria.Value);
+     objeto.nomeproduto:=dm.FDMemTableProdutonomeproduto.Value;
+     objeto.precocusto:= StrToCurr( dm.FDMemTableProdutoprecocusto.Value);
+     objeto.precodevenda:= StrToCurr( dm.FDMemTableProdutoprecodevenda.Value);
+     objeto.qteestoque:=StrToCurr(dm.FDMemTableProdutoqteestoque.Value) ;
+     objeto.ativo:=StrToBool(dm.FDMemTableProdutoativo.Value);
+     objeto.customedio:=StrToCurr(dm.FDMemTableProdutocustomedio.Value);
+     objeto.tipoproduto:=dm.FDMemTableProdutotipoproduto.Value;
+     objeto.unidede:=dm.FDMemTableProdutounidede.Value;
+     objeto.codigofabricante:=dm.FDMemTableProdutocodigofabricante.Value;
+     objeto.codigoEan13:=dm.FDMemTableProdutocodigoEan13.Value;
+     objeto.peso:=StrToCurr( dm.FDMemTableProdutopeso.Value);
+     objeto.ultiMocusto_pago:=StrToCurr(dm.FDMemTableProdutoultiMocusto_pago.Value);
+   if dm.FDMemTableProdutodataultimacmpra.Value<>'' then
+     begin
+     objeto.dataultimacmpra:=StrToDateTime(dm.FDMemTableProdutodataultimacmpra.Value);
+
+     end;
+    objeto.marca:=dm.FDMemTableProdutomarca.Value;
+
+
+
+//    jsonObj := TJSONObject.ParseJSONValue(TEncoding.UTF8.GetBytes(lREsponse.Content), 0) as TJSONObject;
+//   objeto  :=TJson.JsonToObject<TProduto>(jsonObj);
+    Result:=objeto ;
+
+end;
+
+constructor TDAOProduto.Create;
+begin
+  dm:=TDataEventos.Create(nil);
+
+end;
+
+destructor TDAOProduto.Destroy;
+begin
+   dm.Free;
+
+  inherited;
+end;
+
+function TDAOProduto.Excluir(pid: integer; usuario: TUsuarioComToken): string;
+begin
+     lREsponse:= TRequest.New.BaseURL('http://192.168.1.3:8080/').
+   Resource('produtos/'+ pid.ToString).
+    BasicAuthentication(usuario.funcionario.email,usuario.senha).
+    Accept('application/json')
+    .Delete;
+    if lREsponse.StatusCode=204 then
+    begin
+      ShowMessage('excluido com sucesso!!');
+    end;
+    if lREsponse.StatusCode=400 then
+    begin
+      raise Exception.Create('Operação não permitida');
+    end;
+        if lREsponse.StatusCode=404 then
+    begin
+      raise Exception.Create('registro não encotrados');
+    end;
+
+
+
+   Result:='';
+end;
+
+function TDAOProduto.pesquisa(colecao: TObjectList<TProduto>; pchave,
+  ptipo: string; usuario: TUsuarioComToken): TObjectList<TProduto>;
+  var produto: TProduto   ;
+begin
+  if Length (pchave)=0 then
+    lREsponse:=    TRequest.New.BaseURL('http://192.168.1.3:8080/' )
+    .AcceptCharset ('application/json').
+     Resource( 'produtos/').
+   BasicAuthentication(usuario.funcionario.email,usuario.senha).
+
+    DataSetAdapter(dm.FDMemTableProduto).Get
+    else
+if ptipo='&Código' then
+
+  lREsponse:=    TRequest.New.BaseURL('http://192.168.1.3:8080/' )
+  .AcceptCharset ('application/json').
+          Resource( 'produtos/'+pchave).
+       BasicAuthentication(usuario.funcionario.email,usuario.senha).
+
+    DataSetAdapter(dm.FDMemTableProduto).Get
+
+      else
+  if ptipo='&Barras' then
+   lREsponse:=   TRequest.New.BaseURL('http://192.168.1.3:8080/' ).
+   AcceptCharset ('application/json').
+          Resource( '/produtos/buscar-por-codigoean?').
+      BasicAuthentication(usuario.funcionario.email,usuario.senha).
+
+      AddParam('codigoEan',pchave).
+    DataSetAdapter(dm.FDMemTableProduto).Get
+
+  else
+   if ptipo='C&ategorias' then
+   lREsponse:=   TRequest.New.BaseURL('http://192.168.1.3:8080/' ).
+   AcceptCharset ('application/json').
+          Resource( '/produtos/por-categorias?').
+      BasicAuthentication(usuario.funcionario.email,usuario.senha).
+
+      AddParam('parametro',pchave).
+    DataSetAdapter(dm.FDMemTableProduto).Get
+
+  else
+  if ptipo='&QteTenha' then
+       lREsponse:=   TRequest.New.BaseURL('http://192.168.1.3:8080/' ).
+   AcceptCharset ('application/json').
+          Resource( 'produtos/que-tenha?').
+      BasicAuthentication(usuario.funcionario.email,usuario.senha).
+
+      AddParam('parametro',pchave).
+    DataSetAdapter(dm.FDMemTableProduto).Get
+   else
+  begin
+    lREsponse:=   TRequest.New.BaseURL('http://192.168.1.3:8080/' ).AcceptCharset ('application/json').
+          Resource( '/produtos/buscar-nome-comecando/?').
+      BasicAuthentication(usuario.funcionario.email,usuario.senha).
+
+      AddParam('parametro',pchave).
+    DataSetAdapter(dm.FDMemTableProduto).Get ;
+
+ end;
+ if lREsponse.StatusCode=403 then
+ begin
+    MessageDlg('Seu usuário não permissão para utilizar este recurso !', mtError,
+        [mbOK], 0);
+       ShowMessage(lREsponse.Content);
+ end
+ else
+  if lREsponse.StatusCode=404 then
+ begin
+    MessageDlg('Registro não encontrado !', mtError,
+        [mbOK], 0);
+       ShowMessage(lREsponse.Content);
+ end
+ else
+ begin
+   colecao.Clear;
+   dm.FDMemTableProduto.First;
+  while not dm.FDMemTableProduto.Eof do
+   begin
+     produto:=TProduto.Create;
+     produto.idproduto:= StrToInt( dm.FDMemTableProdutoidproduto.Value);
+     produto.categoria.Nomecategoria:= dm.FDMemTableProdutocategorianomecategoria.Value;
+     produto.categoria.IdCategoria:=StrToInt(dm.FDMemTableProdutocategoriaidCategoria.Value);
+     produto.nomeproduto:=dm.FDMemTableProdutonomeproduto.Value;
+     produto.precocusto:= StrToCurr( dm.FDMemTableProdutoprecocusto.Value);
+     produto.precodevenda:= StrToCurr( dm.FDMemTableProdutoprecodevenda.Value);
+     produto.qteestoque:=StrToCurr(dm.FDMemTableProdutoqteestoque.Value) ;
+     produto.marca:=dm.FDMemTableProdutomarca.Value;
+     produto.unidede:=dm.FDMemTableProdutounidede.Value;
+     colecao.Add(produto);
+     dm.FDMemTableProduto.Next;
+   end;
+ end;
+   Result:=colecao;
+
+end;
+
+function TDAOProduto.salvar(objeto: TProduto;
+  usuario: TUsuarioComToken): string;
+var
+  json:TJSONObject;
+
+begin
+
+    json := TJson.ObjectToJsonObject(objeto);
+   // ShowMessage(json.ToString);
+    try
+     if objeto.idproduto=0 then
+     begin
+
+      LResponse:=  TRequest.New.BaseURL('http://192.168.1.3:8080/' ).
+      Resource('produtos/').
+       BasicAuthentication(usuario.funcionario.email,usuario.senha).
+      AcceptCharset ('application/json')
+      .AddBody(json).Post;
+
+    end
+    else
+    begin
+   LResponse := TRequest.New.BaseURL('http://192.168.1.3:8080/' ).
+   Resource('produtos').
+   BasicAuthentication(usuario.funcionario.email,usuario.senha).
+   AcceptCharset ('application/json')
+  .AddBody(json).Put;
+    end;
+   if LResponse.StatusCode=201  then
+  begin
+  ShowMessage('salvo com sucesso'+ LResponse.StatusCode.ToString);
+  end;
+  if (LResponse.StatusCode=200) and (objeto.idproduto>0 )then
+  begin
+     ShowMessage('Editado com sucesso.');
+  end;
+  if LResponse.StatusCode=403 then
+   begin
+      raise Exception.Create('seu usuário não tem permissão para usar este serviço');
+   end;
+     if LResponse.StatusCode=400 then
+   begin
+    ShowMessage(LResponse.Content);
+   end;
+    finally
+
+    end;
+
+
+
+end;
+
+
+end.

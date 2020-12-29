@@ -1,0 +1,89 @@
+unit SistemaGestao.Model.EntidadeFornecedor;
+
+interface
+        uses SistemaGestao.Model.EntidadeCondicaoPagamento,REST.Json,System.JSON,
+        SistemaGestao.Model.EntidadePessoa,System.SysUtils;
+        type
+        TFornecedor = class(TPessoa)
+        private
+    FcondicaocondicaoPamento: TCondicaoPagmento;
+    Frepresentante: string;
+    Fsite: string;
+    procedure SetcondicaocondicaoPamento(const Value: TCondicaoPagmento);
+    procedure Setrepresentante(const Value: string);
+    procedure Setsite(const Value: string);
+
+        protected
+
+        public
+          constructor Create;
+          destructor Destroy; override;
+
+        published
+           property condicaocondicaoPamento:TCondicaoPagmento read FcondicaocondicaoPamento write SetcondicaocondicaoPamento;
+           property representante:string read Frepresentante write Setrepresentante;
+           property site:string read Fsite write Setsite;
+           function deObjetoparaJson(json: TJSONObject):TJSONObject;
+        end;
+implementation
+
+{ TFornecedor }
+
+constructor TFornecedor.Create;
+begin
+
+ inherited;
+
+  FcondicaocondicaoPamento:=TCondicaoPagmento.Create;
+
+end;
+
+function TFornecedor.deObjetoparaJson(json: TJSONObject): TJSONObject;
+
+begin
+
+     json.AddPair('codigo',Self.codigo.ToString);
+     json.AddPair('nomePessoa',self.nomePessoa);
+     json.AddPair('logradouro',Self.logradouro);
+     json.AddPair('numero',Self.numero.ToString);
+     json.AddPair('bairro',Self.bairro);
+     json.AddPair('complemto',Self.complemto);
+     json.AddPair('dataNiverouFundacao',DateToStr (Self.dataNiverouFundacao));
+     json.AddPair('cpfouCnpj',Self.cpfouCnpj);
+     json.AddPair('rgouInscricao',Self.rgouInscricao);
+     json.AddPair('telefone',Self.telefone);
+     json.AddPair('cep',Self.cep);
+     json.AddPair('celular',Self.celular);
+     json.AddPair('tipessoa',Self.tipessoa);
+     json.AddPair('email',Self.email);
+
+     json.AddPair('representante',representante);
+     json.AddPair('site',site);
+
+     Result:=json;
+end;
+
+destructor TFornecedor.Destroy;
+begin
+  FcondicaocondicaoPamento.Free;
+
+  inherited;
+end;
+
+procedure TFornecedor.SetcondicaocondicaoPamento(
+  const Value: TCondicaoPagmento);
+begin
+  FcondicaocondicaoPamento := Value;
+end;
+
+procedure TFornecedor.Setrepresentante(const Value: string);
+begin
+  Frepresentante := Value;
+end;
+
+procedure TFornecedor.Setsite(const Value: string);
+begin
+  Fsite := Value;
+end;
+
+end.

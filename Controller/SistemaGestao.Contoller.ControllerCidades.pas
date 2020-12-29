@@ -1,0 +1,117 @@
+unit SistemaGestao.Contoller.ControllerCidades;
+
+interface
+         uses SistemaGestao.Model.EntidadeCidade,SistemaGestao.Model.EntidadeUsuarioComToken,
+          SistemaGestao.Model.IterfaceController, System.Generics.Collections,
+           SistemaGestao.Model.DaoCidade,
+           Vcl.Dialogs, SistemaGestao.Model.IterfaceDao;
+         type
+         TControllerCidade = class(TInterfacedObject, Icontroller<TCidade>)
+         private
+    Fobjeto: TCidade;
+    pUsuario: TUsuarioComToken;
+    procedure Setobjeto(const Value: TCidade);
+           { private declarations }
+         protected
+              daoCidade: Idao<TCidade> ;
+         public
+
+
+         published
+            constructor Create;
+          destructor Destroy; override;
+
+
+           function salvar: string;
+           function carrega:TCidade ;
+           function carregar (objeto: TCidade;usuario:TUsuarioComToken):TCidade;
+           function pesquisar (phave,ptipo:string):TCidade;
+                     function buscarTodos(colecao: TObjectList<TCidade> ): TObjectList<TCidade>;
+           function pesquisa(colecaoObjeto: TObjectList<TCidade>;phave,ptipo:string;usuario:TUsuarioComToken ): TObjectList<TCidade>;
+
+              function Excluir(pId: integer;usuario:TUsuarioComToken):string;
+           function GetObjeto:TCidade;
+           property objeto :TCidade  read Fobjeto write Setobjeto;
+            procedure conhecaUsuario(usuario: TUsuarioComToken);
+                function buscar:Tcidade;
+         end;
+implementation
+
+{ TControllerCidade }
+
+
+function TControllerCidade.buscar: Tcidade;
+begin
+
+   Result:=  daoCidade.buscar(objeto, pUsuario);
+end;
+
+function TControllerCidade.buscarTodos(
+  colecao: TObjectList<TCidade>): TObjectList<TCidade>;
+begin
+
+end;
+
+function TControllerCidade.carrega: TCidade;
+begin
+    Result:=daoCidade.Carregar(objeto,pUsuario);
+end;
+
+function TControllerCidade.carregar(objeto: TCidade;
+  usuario: TUsuarioComToken): TCidade;
+begin
+
+end;
+
+procedure TControllerCidade.conhecaUsuario(usuario: TUsuarioComToken);
+begin
+   pUsuario:=usuario;
+end;
+
+constructor TControllerCidade.Create;
+begin
+   objeto:=TCidade.Create;
+   daoCidade:=TDaoCidade.Create;
+end;
+
+destructor TControllerCidade.Destroy;
+begin
+  objeto.Free;
+  inherited;
+end;
+
+function TControllerCidade.Excluir(pId: integer;
+  usuario: TUsuarioComToken): string;
+begin
+
+end;
+
+function TControllerCidade.GetObjeto: TCidade;
+begin
+   Result:=Fobjeto;
+end;
+
+function TControllerCidade.pesquisa(colecaoObjeto: TObjectList<TCidade>; phave,
+  ptipo: string; usuario: TUsuarioComToken): TObjectList<TCidade>;
+begin
+
+   Result:=daoCidade.pesquisa(colecaoObjeto,phave,ptipo,usuario);
+end;
+
+function TControllerCidade.pesquisar(phave, ptipo: string): TCidade;
+begin
+
+end;
+
+
+function TControllerCidade.salvar: string;
+begin
+
+end;
+
+procedure TControllerCidade.Setobjeto(const Value: TCidade);
+begin
+  Fobjeto := Value;
+end;
+
+end.

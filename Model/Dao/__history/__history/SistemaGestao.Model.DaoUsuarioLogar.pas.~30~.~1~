@@ -1,0 +1,72 @@
+unit SistemaGestao.Model.DaoUsuarioLogar;
+
+interface
+       uses REST.Json, System.JSON,  Vcl.Dialogs, SistemaGestao.Model.EntidadeUsuarioComToken,
+       REST.Client, System.StrUtils, System.SysUtils,
+       RESTRequest4D.Request,SistemaGestao.Model.Entidade.UsuarioLogar;
+       type
+       TDaoUsuarioLogar = class
+       private
+
+       protected
+          usuariocomToken: TUsuarioComToken;
+          var lResponse:IResponse;
+          token:PChar;
+
+       public
+         constructor Create;
+         destructor Destroy; override;
+         function acessar(usuario: TUsuarioLogar): Integer;
+         function pegatoken(ptoken:string):string;
+       published
+
+       end;
+implementation
+
+{ TDaoUsuarioLogar }
+
+function TDaoUsuarioLogar.acessar(usuario: TUsuarioLogar): Integer;
+var json:TJSONObject;
+
+status:Integer;
+begin
+    json:=TJson.ObjectToJsonObject(usuario);
+
+     lResponse:=   TRequest
+     .New.BaseURL('http://192.168.1.3:8080/')
+   .Resource('login').
+   BasicAuthentication(usuario.funcionario.email,usuario.senha).
+      AcceptCharset('application/json').
+   AddBody(json).Post;
+   if lResponse.StatusCode=200 then
+   begin
+     token:= lResponse.Headers.GetText;
+     status:=lResponse.StatusCode;
+
+   end;
+   Result:=status;
+
+end;
+
+constructor TDaoUsuarioLogar.Create;
+begin
+
+end;
+
+destructor TDaoUsuarioLogar.Destroy;
+begin
+
+  inherited;
+end;
+
+function TDaoUsuarioLogar.pegatoken(ptoken: string): string;
+  var tamanho: Integer;
+begin
+      tamanho:=Length(token);
+      ShowMessage(tamanho.ToString);
+  ptoken:=token;
+  Result:=ptoken;
+end;
+
+
+end.

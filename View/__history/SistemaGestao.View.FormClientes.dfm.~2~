@@ -1,0 +1,79 @@
+inherited FrmModelo1: TFrmModelo1
+  Caption = 'FrmModelo1'
+  ClientHeight = 531
+  ClientWidth = 818
+  ExplicitWidth = 818
+  ExplicitHeight = 531
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Pageprincipal: TPageControl
+    Width = 818
+    Height = 531
+    inherited Tabconsulta: TTabSheet
+      inherited Panel1: TPanel
+        Width = 810
+        Color = clTeal
+      end
+      inherited Panel2: TPanel
+        Top = 437
+        Width = 810
+        Color = 8421440
+        inherited btn_novo: TSpeedButton
+          Left = 339
+          Anchors = [akTop, akRight]
+          ExplicitLeft = 330
+        end
+        inherited btn_editar: TSpeedButton
+          Left = 450
+          Anchors = [akTop, akRight]
+          ExplicitLeft = 441
+        end
+        inherited btn_excluir: TSpeedButton
+          Left = 561
+          Anchors = [akTop, akRight]
+        end
+        inherited btn_fechar: TSpeedButton
+          Left = 687
+          Anchors = [akTop, akRight]
+          ExplicitLeft = 687
+        end
+      end
+      inherited Panel3: TPanel
+        Width = 810
+        Height = 356
+      end
+    end
+    inherited tabcadastro: TTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 25
+      ExplicitWidth = 759
+      ExplicitHeight = 465
+      inherited Panel4: TPanel
+        Width = 810
+        ExplicitWidth = 759
+      end
+      inherited Panel5: TPanel
+        Top = 437
+        Width = 810
+        ExplicitTop = 400
+        ExplicitWidth = 759
+        inherited btn_salvar: TSpeedButton
+          Left = 585
+          Anchors = [akTop, akRight]
+          ExplicitLeft = 585
+        end
+        inherited btn_voltar: TSpeedButton
+          Left = 696
+          Anchors = [akTop, akRight]
+          ExplicitLeft = 696
+        end
+      end
+      inherited Panel6: TPanel
+        Width = 810
+        Height = 372
+        ExplicitWidth = 759
+        ExplicitHeight = 335
+      end
+    end
+  end
+end

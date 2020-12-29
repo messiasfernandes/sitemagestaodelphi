@@ -1,0 +1,33 @@
+unit SistemaGestao.Contoller.ControllerPadrao;
+
+interface
+
+        type
+
+        TController = class
+        private
+
+        protected
+
+        public
+        function salvar: string;virtual;
+        function pesquisar (phave,ptipo:string): Boolean; virtual;
+        procedure setDm  (pdm:TObject);
+        published
+          { published declarations }
+        end;
+implementation
+
+{ TController }
+
+function TController.pesquisar(phave, ptipo: string): Boolean;
+begin
+
+end;
+
+function TController.salvar: string;
+begin
+
+end;
+
+end.

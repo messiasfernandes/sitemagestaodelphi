@@ -1,0 +1,97 @@
+unit SistemaGestao.Contoller.ControllerForncedores;
+
+interface
+       uses SistemaGestao.Model.IterfaceController, SistemaGestao.Model.EntidadeFornecedor,
+       SistemaGestao.Model.DaoFornecedor,System.Generics.Collections,
+        SistemaGestao.Model.IterfaceDao, SistemaGestao.Model.EntidadeUsuarioComToken;
+       type
+       TControllerForncedor = class(TInterfacedObject, Icontroller<TFornecedor>)
+       private
+    Fobjeto: TFornecedor;
+         daoForncedor: Idao<TFornecedor>  ;
+          pUsuario: TUsuarioComToken;
+       protected
+
+       public
+         constructor Create;
+         destructor Destroy; override;
+
+       published
+            function salvar:string;
+           procedure Setobjeto(const objeto: TFornecedor);
+           function GetObjeto:TFornecedor;
+           function buscarTodos(colecao: TObjectList<TFornecedor> ): TObjectList<TFornecedor>;
+           function carregar (objeto : TFornecedor;usuario:TUsuarioComToken ):TFornecedor;
+           function carrega:TFornecedor;
+           function pesquisa(colecaoObjeto: TObjectList<TFornecedor> ;phave,ptipo:string;usuario:TUsuarioComToken): TObjectList<TFornecedor>;
+           function Excluir(pId: integer;usuario:TUsuarioComToken):string;
+           property objeto: TFornecedor read Fobjeto write Setobjeto;
+           procedure conhecaUsuario(usuario: TUsuarioComToken);
+       end;
+implementation
+
+{ TControllerForncedor }
+
+function TControllerForncedor.buscarTodos(
+  colecao: TObjectList<TFornecedor>): TObjectList<TFornecedor>;
+begin
+
+end;
+
+function TControllerForncedor.carrega: TFornecedor;
+begin
+    Result:=daoForncedor.Carregar(objeto,pUsuario);
+end;
+
+function TControllerForncedor.carregar(objeto: TFornecedor;
+  usuario: TUsuarioComToken): TFornecedor;
+begin
+    Result:=daoForncedor.Carregar(objeto,usuario);
+end;
+
+procedure TControllerForncedor.conhecaUsuario(usuario: TUsuarioComToken);
+begin
+   pUsuario:=usuario;
+end;
+
+constructor TControllerForncedor.Create;
+begin
+   daoForncedor:=TDaoFornecedor.Create;
+   Fobjeto:=TFornecedor.Create;
+end;
+
+destructor TControllerForncedor.Destroy;
+begin
+
+   Fobjeto.Free;
+  inherited;
+end;
+
+function TControllerForncedor.Excluir(pId: integer;
+  usuario: TUsuarioComToken): string;
+begin
+  Result := daoForncedor.Excluir(pId,pUsuario);
+end;
+
+function TControllerForncedor.GetObjeto: TFornecedor;
+begin
+   Result:=Fobjeto;
+end;
+
+function TControllerForncedor.pesquisa(colecaoObjeto: TObjectList<TFornecedor>;
+  phave, ptipo: string; usuario: TUsuarioComToken): TObjectList<TFornecedor>;
+begin
+  Result:=daoForncedor.pesquisa(colecaoObjeto, phave, ptipo, usuario);
+end;
+
+function TControllerForncedor.salvar: string;
+begin
+  Result:=daoForncedor.salvar(objeto, pUsuario);
+end;
+
+procedure TControllerForncedor.Setobjeto(const objeto: TFornecedor);
+begin
+    Fobjeto:=objeto;
+end;
+
+end.

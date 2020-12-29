@@ -1,0 +1,319 @@
+unit SistemaGestao.Model.EntidadeCompra;
+
+interface
+uses SistemaGestao.Model.EntidadeFornecedor,System.Generics.Collections, SistemaGestao.Model.EntidadeItemCompra,
+SistemaGestao.Model.EntidadeProduto, SistemaGestao.Model.IterfaceDao, SistemaGestao.Model.DaoProduto, SistemaGestao.Model.EntidadeUsuarioComToken,
+System.StrUtils,System.SysUtils,ACBrDFe,ACBrBase,REST.Json,System.JSON;
+
+
+       type TCompra = class(TObject)
+            private
+  private
+    Fvalorfrete: Currency;
+    Fdesconto: Currency;
+    Femail: string;
+    Foutrasdepesza: Currency;
+    Ftotalproduto: Currency;
+    Fvalorseguro: Currency;
+    Ffornecedor: TFornecedor;
+    Fmarkqup: Currency;
+    FtotalCompra: Currency ;
+    FmotivoCancelamento: string;
+    FidCompra: Integer;
+    Fnumeronota: Integer;
+    Fdatadeentrada : string;
+    FdataCompra :string;
+    Fdatacancelamento:string;
+    FstatusCompra: string;
+    Fitemcompras: TObjectList<TItemCompra>;
+    procedure Setdesconto(const Value: Currency);
+    procedure Setemail(const Value: string);
+    procedure Setfornecedor(const Value: TFornecedor);
+    procedure SetidCompra(const Value: Integer);
+    procedure Setmarkqup(const Value: Currency);
+    procedure SetmotivoCancelamento(const Value: string);
+    procedure Setnumeronota(const Value: Integer);
+    procedure Setoutrasdepesza(const Value: Currency);
+
+    procedure Setvalorfrete(const Value: Currency);
+    procedure Setvalorseguro(const Value: Currency);
+    procedure SetstatusCompra(const Value: string);
+    procedure Setitemcompras(const Value: TObjectList<TItemCompra>);
+    procedure SettotalCompra(const Value: Currency);
+    procedure Settotalproduto(const Value: Currency);
+
+            protected
+         daoProduto: Idao<TProduto>;
+
+            public
+        constructor Create;
+        destructor Destroy; override;
+        function GetDataCompra: TDateTime;
+        procedure SetdataCompra(avalue : TDateTime);
+        function GetDatadeentrada: TDateTime;
+        procedure Setdatadeentrada(avalue : TDateTime);
+        function GetDataCancelamento: TDateTime;
+        procedure Setdatacancelamento(avalue : TDateTime);
+        property  idCompra: Integer read FidCompra write SetidCompra;
+        property  numeronota: Integer read Fnumeronota write Setnumeronota;
+        property   markqup : Currency read Fmarkqup write Setmarkqup;
+         property  dataCompra: TDateTime read GetDataCompra write SetDataCompra;
+        property   valorseguro : Currency read Fvalorseguro write Setvalorseguro;
+
+
+        property  valorfrete : Currency read Fvalorfrete write Setvalorfrete;
+        property  outrasdepesza : Currency read Foutrasdepesza write Setoutrasdepesza;
+        property  desconto : Currency read Fdesconto write Setdesconto;
+        property  datadeentrada : TDateTime read GetDatadeentrada write SetDatadeentrada;
+        property  datacancelamento: TDateTime read GetDataCancelamento write SetDataCancelamento;
+        property  motivoCancelamento: string read FmotivoCancelamento write SetmotivoCancelamento;
+        property  totalCompra :Currency read FtotalCompra write SettotalCompra;
+        property  totalproduto : Currency  read Ftotalproduto write Settotalproduto;
+        property fornecedor : TFornecedor read Ffornecedor write Setfornecedor;
+        property email:string read Femail write Setemail;
+        property  statusCompra: string read FstatusCompra write SetstatusCompra;
+        property itemcompras:TObjectList<TItemCompra> read Fitemcompras write Setitemcompras;
+
+        function remover (idproduto:Integer):TObjectList<TItemCompra>;
+         procedure zerarpropiedade;
+          function deObjetoparaJson(json: TJSONObject):TJSONObject;
+         function addProduto(pProduto: TProduto; qtde:Currency;pCusto:Currency):TObjectList<TItemCompra>;
+            published
+
+            end;
+implementation
+
+uses
+  ACBrNFe, Vcl.Dialogs;
+
+{ TCompra }
+
+function TCompra.addProduto(pProduto: TProduto ;qtde:Currency;pCusto:Currency): TObjectList<TItemCompra>;
+var itemcompra: TItemCompra;
+     I:Integer; aux: Boolean;
+begin
+    aux:=True;
+      itemcompra := TItemCompra.Create;
+      ///  itemcompra.produto:=pProduto;
+       itemcompra.produto.idproduto:=pProduto.idproduto;
+       itemcompra.qtde:=qtde;
+         itemcompra.subtotal := itemcompra.qtde* pcusto;
+         itemcompra.produto.nomeproduto:=pProduto.nomeproduto;
+         itemcompra.produto.precocusto:= pcusto;
+         itemcompra.produto.unidede:=pProduto.unidede;
+         itemcompra.produto.categoria.IdCategoria:=pProduto.categoria.IdCategoria;
+         itemcompra.produto.tipoproduto:=pProduto.tipoproduto;
+         itemcompra.produto.precodevenda:=pProduto.precodevenda;
+         itemcompra.produto.customedio:=pProduto.customedio;
+         itemcompra.produto.peso:=pProduto.peso;
+         itemcompra.produto.dataultimacmpra:=Now;
+         itemcompra.produto.codigoEan13:=pProduto.codigoEan13;
+         itemcompra.produto.codigofabricante:=pProduto.codigofabricante;
+         itemcompra.produto.ativo:=pProduto.ativo;
+         itemcompra.produto.qteestoque:=pProduto.qteestoque;
+         itemcompra.produto.ultiMocusto_pago:=pProduto.precocusto;
+             itemcompra.numItem := itemcompras.Count+1;
+         for I := 0 to pred(itemcompras.Count) do
+      begin
+        if itemcompras.Items[I].produto.idproduto = pProduto.idproduto then
+        begin
+          itemcompra.subtotal := itemcompra.subtotal +
+            itemcompras.Items[I].subtotal;
+          itemcompra.qtde := itemcompra.qtde +
+           itemcompras.Items[I].qtde;
+
+          itemcompras.Delete(I);
+         itemcompras.Insert(I, itemcompra);
+          aux := False;
+        end;
+
+      end;
+
+      if aux = True then
+
+      begin
+        itemcompras.Add(itemcompra);
+      end;
+      totalCompra:=totalCompra+itemcompra.Subtotal;
+      totalproduto:=totalproduto + itemcompra.Subtotal;
+      Result:=itemcompras;
+end;
+
+
+
+constructor TCompra.Create;
+begin
+   fornecedor:=TFornecedor.Create;
+   itemcompras:=TObjectList<TItemCompra>.Create;
+   daoProduto:=TDAOProduto.Create;
+end;
+
+function TCompra.deObjetoparaJson(json: TJSONObject): TJSONObject;
+
+begin
+
+      json.AddPair('idCompra', idCompra.ToString);
+      json.AddPair('numeronota', numeronota.ToString);
+      json.AddPair('dataCompra',DateToStr(dataCompra));
+      json.AddPair('markqup', TJSONNumber.Create(markqup));
+      json.AddPair('valorseguro',TJSONNumber.Create(valorseguro) );
+      json.AddPair('valorfrete', TJSONNumber.Create(valorfrete));
+      json.AddPair('totalCompra',TJSONNumber.Create(totalCompra));
+      json.AddPair('totalproduto', TJSONNumber.Create(totalproduto));
+      json.AddPair('desconto',TJSONNumber.Create(desconto)) ;
+     json.AddPair('idfonecedor', TJSONNumber.Create(fornecedor.codigo));
+      json.AddPair('outrasdepesza',TJSONNumber.Create( outrasdepesza));
+      json.AddPair('statusCompra', statusCompra)  ;
+      ShowMessage(json.ToString);
+      Result:=json;
+end;
+
+destructor TCompra.Destroy;
+begin
+   fornecedor.Free;
+   itemcompras.Free;
+
+  inherited;
+end;
+
+function TCompra.GetDataCancelamento: TDateTime;
+begin
+    Result:=StrToDateTime(Fdatacancelamento) ;
+end;
+
+function TCompra.GetDataCompra: TDateTime;
+begin
+   Result:=StrToDateTime(FdataCompra) ;
+end;
+
+function TCompra.GetDatadeentrada: TDateTime;
+begin
+     Result:=StrToDateTime(Fdatadeentrada) ;
+end;
+
+function TCompra.remover(idproduto: Integer): TObjectList<TItemCompra>;
+var  I: Integer;
+  valor: Boolean;
+begin
+
+  valor := True;
+  I := 0;
+  while (valor = True) do
+
+  begin
+    if itemcompras.Items[I].produto.idproduto = idproduto then
+    begin
+      totalCompra := totalCompra- itemcompras.Items
+        [I].subtotal;
+     totalproduto := totalproduto-
+        itemcompras.Items[I].subtotal;
+
+      itemcompras.Delete(I);
+      valor := False;
+    end;
+    Inc(I);
+  end;
+  Result:=itemcompras;
+end;
+
+procedure TCompra.Setdatacancelamento(avalue: TDateTime);
+begin
+     Fdatacancelamento:= FormatDateTime('DD/MM/YYYY',avalue);
+end;
+
+procedure TCompra.SetdataCompra(avalue: TDateTime);
+begin
+   FdataCompra:= FormatDateTime('DD/MM/YYYY',avalue);
+end;
+
+procedure TCompra.Setdatadeentrada(avalue: TDateTime);
+begin
+  Fdatadeentrada:= FormatDateTime('DD/MM/YYYY HH:M ',avalue);
+end;
+
+procedure TCompra.Setdesconto(const Value: Currency);
+begin
+  Fdesconto := Value;
+end;
+
+procedure TCompra.Setemail(const Value: string);
+begin
+  Femail := Value;
+end;
+
+procedure TCompra.Setfornecedor(const Value: TFornecedor);
+begin
+  Ffornecedor := Value;
+end;
+
+procedure TCompra.SetidCompra(const Value: Integer);
+begin
+  FidCompra := Value;
+end;
+
+procedure TCompra.Setitemcompras(const Value: TObjectList<TItemCompra>);
+begin
+  Fitemcompras := Value;
+end;
+
+procedure TCompra.Setmarkqup(const Value: Currency);
+begin
+  Fmarkqup := Value;
+end;
+
+procedure TCompra.SetmotivoCancelamento(const Value: string);
+begin
+  FmotivoCancelamento := Value;
+end;
+
+procedure TCompra.Setnumeronota(const Value: Integer);
+begin
+  Fnumeronota := Value;
+end;
+
+procedure TCompra.Setoutrasdepesza(const Value: Currency);
+begin
+  Foutrasdepesza := Value;
+end;
+
+procedure TCompra.SetstatusCompra(const Value: string);
+begin
+  FstatusCompra := Value;
+end;
+
+
+
+
+procedure TCompra.SettotalCompra(const Value: Currency);
+begin
+  FtotalCompra := Value;
+end;
+
+procedure TCompra.Settotalproduto(const Value: Currency);
+begin
+  Ftotalproduto := Value;
+end;
+
+procedure TCompra.Setvalorfrete(const Value: Currency);
+begin
+  Fvalorfrete := Value;
+end;
+
+procedure TCompra.Setvalorseguro(const Value: Currency);
+begin
+  Fvalorseguro := Value;
+end;
+
+procedure TCompra.zerarpropiedade;
+begin
+    Self.totalCompra:=0;
+    Self.totalproduto:=0;
+    Self.desconto:=0;
+    Self.itemcompras.Clear;
+    Self.valorfrete:=0;
+    Self.valorseguro:=0;
+    Self.outrasdepesza:=0;
+    Self.idCompra:=0 ;
+end;
+
+end.

@@ -1,0 +1,169 @@
+object FrmLogin: TFrmLogin
+  Left = 0
+  Top = 0
+  BorderStyle = bsDialog
+  Caption = 'Login'
+  ClientHeight = 248
+  ClientWidth = 360
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Panel1: TPanel
+    Left = 0
+    Top = 0
+    Width = 360
+    Height = 248
+    Align = alClient
+    BevelOuter = bvNone
+    TabOrder = 0
+    object StackPanel1: TStackPanel
+      Left = 0
+      Top = 161
+      Width = 360
+      Height = 50
+      Align = alTop
+      BevelOuter = bvNone
+      ControlCollection = <
+        item
+          Control = btn_cancelar
+        end
+        item
+          Control = btn_logar
+        end
+        item
+          Control = btn_mostrasenha
+        end>
+      Orientation = spoHorizontal
+      Padding.Left = 20
+      Padding.Right = 20
+      Spacing = 10
+      TabOrder = 0
+      DesignSize = (
+        360
+        50)
+      object btn_cancelar: TSpeedButton
+        Left = 20
+        Top = 1
+        Width = 93
+        Height = 48
+        Caption = 'Cancelar'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = btn_cancelarClick
+      end
+      object btn_logar: TSpeedButton
+        Left = 123
+        Top = 1
+        Width = 102
+        Height = 48
+        Caption = 'Logar'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = btn_logarClick
+      end
+      object btn_mostrasenha: TSpeedButton
+        Left = 235
+        Top = 1
+        Width = 101
+        Height = 48
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Mostar Senha'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        OnClick = btn_mostrasenhaClick
+      end
+    end
+    object StackPanel2: TStackPanel
+      Left = 0
+      Top = 0
+      Width = 360
+      Height = 161
+      Align = alTop
+      BevelOuter = bvNone
+      ControlCollection = <
+        item
+          Control = Label1
+        end
+        item
+          Control = edt_email
+          HorizontalPositioning = sphpFill
+          VerticalPositioning = spvpFill
+        end
+        item
+          Control = edt_senha
+          HorizontalPositioning = sphpFill
+          VerticalPositioning = spvpFill
+        end>
+      Padding.Left = 20
+      Padding.Top = 40
+      Padding.Right = 20
+      Spacing = 10
+      TabOrder = 1
+      object Label1: TLabel
+        Left = 20
+        Top = 40
+        Width = 31
+        Height = 13
+        Caption = 'Label1'
+        Visible = False
+      end
+      object edt_email: TEdit
+        Left = 20
+        Top = 63
+        Width = 320
+        Height = 21
+        Hint = 'Email'
+        Align = alClient
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        Text = '5'
+        TextHint = 'Usu'#225'rio'
+      end
+      object edt_senha: TEdit
+        Tag = 5
+        Left = 20
+        Top = 94
+        Width = 320
+        Height = 21
+        Hint = 'Ssnha'
+        Align = alClient
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        PasswordChar = '*'
+        TabOrder = 1
+        TextHint = 'Senha'
+      end
+    end
+  end
+end

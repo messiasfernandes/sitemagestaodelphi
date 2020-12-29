@@ -1,0 +1,30 @@
+inherited FrmFormadePagamento: TFrmFormadePagamento
+  Caption = 'FrmFormadePagamento'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited Pageprincipal: TPageControl
+    inherited tabcadastro: TTabSheet
+      inherited Panel6: TPanel
+        object Label1: TLabel [1]
+          Left = 36
+          Top = 96
+          Width = 117
+          Height = 14
+          Caption = 'Descri'#231#227'o da Forma'
+        end
+        inherited edt_codigo: TMaskEdit
+          Left = 176
+          ExplicitLeft = 176
+        end
+        object edt_forma: TEdit
+          Left = 176
+          Top = 93
+          Width = 313
+          Height = 22
+          MaxLength = 60
+          TabOrder = 1
+        end
+      end
+    end
+  end
+end

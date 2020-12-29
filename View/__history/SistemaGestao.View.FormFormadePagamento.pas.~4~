@@ -1,0 +1,43 @@
+unit SistemaGestao.View.FormFormadePagamento;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, SistemaGestao.View.FormModelo,
+  Data.Bind.EngExt, Vcl.Bind.DBEngExt, Vcl.Mask, Data.Bind.Components,
+  Data.Bind.ObjectScope, Vcl.Buttons, Vcl.StdCtrls, Vcl.WinXCtrls, Vcl.ExtCtrls,
+  Vcl.ComCtrls,  System.Generics.Collections,
+  SistemaGestao.Model.IterfaceController,
+  SistemaGestao.Model.EntidadeFormadePagamento;
+
+type
+  TFrmFormadePagamento = class(TFrmModelo)
+    Label1: TLabel;
+    edt_forma: TEdit;
+  private
+    pControleForma: Icontroller<TFormadePagamento>;
+    colecaoForma: TObjectList<TFormadePagamento>;
+  public
+        procedure pesquisar;  override;
+  end;
+
+var
+  FrmFormadePagamento: TFrmFormadePagamento;
+
+implementation
+
+{$R *.dfm}
+
+{ TFrmFormadePagamento }
+
+procedure TFrmFormadePagamento.pesquisar;
+var tipo:string;
+begin
+
+  inherited;
+  tipo:='';
+  colecaoForma:=pControleForma.pesquisa(colecaoForma, edt_chave.Text,tipo );
+end;
+
+end.

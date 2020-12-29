@@ -1,0 +1,124 @@
+unit SistemaGestao.Contoller.ControllerProduto;
+
+interface
+ uses SistemaGestao.Model.EntidadeProduto, SistemaGestao.Model.IterfaceDao,
+         SistemaGestao.Model.DaoProduto, SistemaGestao.Model.IterfaceEntidade, System.Generics.Collections,
+         SistemaGestao.Model.IterfaceController,SistemaGestao.Model.EntidadeUsuarioComToken;
+         type
+         TcontrollerProduto = class(TInterfacedObject,Icontroller<TProduto>)
+         private
+
+        daoProduto:Idao<TProduto>;
+        Fobjeto: TProduto;
+        pUsuario: TUsuarioComToken;
+        procedure Setobjeto(const Value: TProduto);
+
+
+
+
+
+           { private declarations }
+         protected
+           { protected declarations }
+         public
+
+          constructor Create;
+          destructor Destroy; override;
+
+           function salvar: string;overload;
+           function carrega:TProduto ;
+
+                     function buscarTodos(colecao: TObjectList<TProduto> ): TObjectList<TProduto>;
+           function pesquisa(colecaoObjeto: TObjectList<TProduto>;phave,ptipo:string;usuario:TUsuarioComToken ): TObjectList<TProduto>;
+              function Excluir(pId: integer;usuario:TUsuarioComToken):string;
+           function GetObjeto:TProduto;
+                function carregar (objeto : T;usuario:TUsuarioComToken ):TProduto;
+           property objeto :TProduto   read Fobjeto write Setobjeto;
+            procedure conhecaUsuario(usuario: TUsuarioComToken);
+                function buscar :TProduto;
+                     function carregar (objeto : TProduto;usuario:TUsuarioComToken ):TProduto;
+         published
+           { published declarations }
+         end;
+
+implementation
+
+
+
+{ TControllerCategorias }
+
+function TcontrollerProduto.buscar: TProduto;
+begin
+
+end;
+
+function TcontrollerProduto.buscarTodos(
+  colecao: TObjectList<TProduto>): TObjectList<TProduto>;
+begin
+
+end;
+
+function TcontrollerProduto.carrega: TProduto;
+begin
+   Result:=  daoProduto.Carregar(objeto, pUsuario);
+end;
+
+
+
+function TcontrollerProduto.carregar(objeto: TProduto;
+  usuario: TUsuarioComToken): TProduto;
+begin
+
+end;
+
+function TcontrollerProduto.carregar(objeto: T; usuario: TUsuarioComToken): TProduto;
+begin
+
+end;
+
+procedure TcontrollerProduto.conhecaUsuario(usuario: TUsuarioComToken);
+begin
+    pUsuario :=usuario;
+end;
+
+constructor TcontrollerProduto.Create;
+begin
+   daoProduto:=TdaoProduto.Create;
+end;
+
+destructor TcontrollerProduto.Destroy;
+begin
+
+  inherited;
+end;
+
+function TcontrollerProduto.Excluir(pId: integer;
+  usuario: TUsuarioComToken): string;
+begin
+    Result:=daoProduto.Excluir(pId);
+end;
+
+function TcontrollerProduto.GetObjeto: TProduto;
+begin
+   Result:=Fobjeto;
+end;
+
+function TcontrollerProduto.pesquisa(colecaoObjeto: TObjectList<TProduto>;
+  phave, ptipo: string; usuario: TUsuarioComToken): TObjectList<TProduto>;
+begin
+    Result:=daoProduto.pesquisa(colecaoObjeto, phave, ptipo);
+end;
+
+
+
+function TcontrollerProduto.salvar: string;
+begin
+    Result:=daoProduto.salvar(objeto,pUsuario);
+end;
+
+procedure TcontrollerProduto.Setobjeto(const Value: TProduto);
+begin
+  Fobjeto := Value;
+end;
+
+end.

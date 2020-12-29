@@ -1,0 +1,102 @@
+unit SistemaGestao.Model.EntidadeContaapagar;
+
+interface
+     uses System.Generics.Collections,SistemaGestao.Model.EntidadeFornecedor,SistemaGestao.Model.EntidadeContaDetalhe;
+        type TContasPagar = class
+             private
+    Fcontasdetalhe: TObjectList<TContasPagarDetalhe>;
+    Fidconta: LongInt;
+    Ffornecedor: TFornecedor;
+    Fdatalancamento: TDate;
+    procedure Setcontasdetalhe(const Value: TObjectList<TContasPagarDetalhe>);
+    procedure Setdatalancamento(const Value: TDate);
+    procedure Setfornecedor(const Value: TFornecedor);
+    procedure Setidconta(const Value: LongInt);
+
+             protected
+
+             public
+               constructor Create;
+               destructor Destroy; override;
+
+
+        property  idconta: LongInt read Fidconta write Setidconta;
+        property  datalancamento : TDate read Fdatalancamento write Setdatalancamento;
+        property contasdetalhe   : TObjectList<TContasPagarDetalhe>  read Fcontasdetalhe write Setcontasdetalhe;
+        property  fornecedor :TFornecedor read Ffornecedor write Setfornecedor;
+        function addcontaras(pnumdoc:LongInt; pdata: TDate; pValorTotal: Currency; pfonecedor: TFornecedor): TObjectList<TContasPagarDetalhe>;
+             published
+
+             end;
+implementation
+
+{ ContasPagar }
+
+function TContasPagar.addcontaras(pnumdoc:LongInt;pdata: TDate;pValorTotal: Currency;
+  pfonecedor: TFornecedor): TObjectList<TContasPagarDetalhe>;
+  var contaDetalhe: TContasPagarDetalhe;
+  I, numparcela: Integer;
+   percetual:Currency;
+begin
+  numparcela:=0;
+   for I := 0 to Pred(pfonecedor.condicaocondicaoPamento.qtdeparcelas) do
+   begin
+      numparcela:=I+1;
+      contaDetalhe.idcontadetalhe:=0;
+       percetual:=pfonecedor.condicaocondicaoPamento
+      .colecaoparcelas.Items[I].percentual/100;
+      contaDetalhe:=TContasPagarDetalhe.Create;
+      contaDetalhe.numtitulo:=pnumdoc;
+      contaDetalhe.numparcela:=numparcela;
+      contaDetalhe.statuspagmaento:='PENDENTE';
+      contaDetalhe.datavencimento:= pdata+pfonecedor.condicaocondicaoPamento.colecaoparcelas.Items
+      [I].dia;
+
+      contaDetalhe.valoparcela:=pValorTotal* pfonecedor.condicaocondicaoPamento
+      .colecaoparcelas.Items[I].percentual/100;
+      contaDetalhe.valorapagar:=contaDetalhe.valoparcela;
+      contaDetalhe.formadePagmamento.Idformapagamento:=pfonecedor.condicaocondicaoPamento.colecaoparcelas
+      .Items[i].formadePagamento.Idformapagamento;
+        contaDetalhe.formadePagmamento.Nomeforma:=pfonecedor.condicaocondicaoPamento.colecaoparcelas
+      .Items[i].formadePagamento.Nomeforma;
+
+      contasdetalhe.Add(contaDetalhe);
+   end;
+   Result:=contasdetalhe;
+end;
+
+constructor TContasPagar.Create;
+begin
+   Ffornecedor:=TFornecedor.Create;
+   Fcontasdetalhe:=TObjectList<TContasPagarDetalhe>.Create;
+end;
+
+destructor TContasPagar.Destroy;
+begin
+  Fcontasdetalhe.Free;
+  Ffornecedor.Free;
+  inherited;
+end;
+
+procedure TContasPagar.Setcontasdetalhe(
+  const Value: TObjectList<TContasPagarDetalhe>);
+begin
+  Fcontasdetalhe := Value;
+end;
+
+procedure TContasPagar.Setdatalancamento(const Value: TDate);
+begin
+  Fdatalancamento := Value;
+end;
+
+procedure TContasPagar.Setfornecedor(const Value: TFornecedor);
+begin
+  Ffornecedor := Value;
+end;
+
+procedure TContasPagar.Setidconta(const Value: LongInt);
+begin
+  Fidconta := Value;
+end;
+
+end.

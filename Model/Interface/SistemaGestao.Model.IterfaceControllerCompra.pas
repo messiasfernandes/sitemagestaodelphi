@@ -1,0 +1,22 @@
+unit SistemaGestao.Model.IterfaceControllerCompra;
+
+interface
+uses System.Generics.Collections, SistemaGestao.Model.EntidadeUsuarioComToken;
+        type
+        IcontrolleCompra<T: class> =interface
+        ['{5E7D0FFD-E892-419D-BEF1-DF7D5DB14DBC}']
+                     function salvar:string;
+           procedure Setobjeto(const objeto: T);
+           function GetObjeto:T;
+           function buscarTodos(colecao: TObjectList<T> ): TObjectList<T>;
+           function carregar (objeto : T;usuario:TUsuarioComToken ):T;
+           function carrega:T ;
+           function pesquisa(colecaoObjeto: TObjectList<T> ;phave,ptipo:string;usuario:TUsuarioComToken): TObjectList<T>;
+           function Excluir(pId: integer;usuario:TUsuarioComToken):string;
+           property objeto: T  read GetObjeto write Setobjeto;
+            procedure conhecaUsuario(usuario: TUsuarioComToken);
+           function cancelarcompra: Integer;
+        end;
+implementation
+
+end.

@@ -1,0 +1,17 @@
+unit SistemaGestao.Model.EntidadeCategoria;
+
+interface
+
+        type TCategoria = class
+
+  private
+    FIdCategoria: Integer;
+    FNomecategoria: string;
+  published
+    property IdCategoria: Integer read FIdCategoria write FIdCategoria;
+    property Nomecategoria: string read FNomecategoria write FNomecategoria;
+  end;
+
+implementation
+
+end.

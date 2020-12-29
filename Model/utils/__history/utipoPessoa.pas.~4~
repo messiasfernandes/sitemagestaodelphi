@@ -1,0 +1,42 @@
+unit utipoPessoa;
+
+interface
+uses System.SysUtils, typinfo, Vcl.StdCtrls;
+        type
+        {$SCOPEDENUMS ON}
+            TTipoPessoa = (JURÍDiCA, FÍSICA);
+             {$SCOPEDENUMS OFF}
+
+              TTipoPessoaHelper = record helper for TTipoPessoa
+              function Getvalue:string;
+
+              end;
+              procedure carregacombox( const acombobox: TComboBox);
+implementation
+
+{ TTipoPessoaHelper }
+  procedure carregacombox( const acombobox: TComboBox);
+  var tipo:TTipoPessoa;
+  begin
+    acombobox.Clear;
+    for tipo := TTipoPessoa.JURÍDiCA to TTipoPessoa.FÍSICA  do
+    begin
+      acombobox.Items.Add(GetEnumName(TypeInfo(TTipoPessoa),Integer(tipo) ));
+    end;
+
+  end;
+function TTipoPessoaHelper.Getvalue: string;
+var tipo:TTipoPessoa;
+begin
+    if Ord(tipo)=0then
+    begin
+    Result:=GetEnumName(TypeInfo(TTipoPessoa),Integer(JURÍDiCA) );
+    end
+    else
+    begin
+      Result:=GetEnumName(TypeInfo(TTipoPessoa),Integer(FÍSICA) );
+    end;
+
+end;
+
+end.

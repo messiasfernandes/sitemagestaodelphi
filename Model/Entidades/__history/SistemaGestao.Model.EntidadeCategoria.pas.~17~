@@ -1,0 +1,82 @@
+unit SistemaGestao.Model.EntidadeCategoria;
+
+interface
+        uses SistemaGestao.Model.EntidadeBase,SistemaGestao.Model.IterfaceEntidade;
+        type TCategoria = class  (TInterfacedObject, IEntidade<TCategoria> )
+             private
+           Fnomedacategoria: string;
+            Fcodigo: Integer;
+            Fdatacadastro: string;
+            FdataAlteracao: string;
+            procedure Setcodigo(const Value: Integer);
+    procedure Setnomedacategoria(const Value: string);
+               { private declarations }
+             protected
+               { protected declarations }
+             public
+            property nomedacategoria :string read Fnomedacategoria write Setnomedacategoria;
+            constructor Create;
+            destructor Destroy; override;
+            property codigo : Integer  read Fcodigo write Setcodigo;
+            function GetDataCadastro: TDateTime;
+            procedure SetDataCadastro (avalue : TDateTime);
+            function GetDataAlteracao: TDateTime;
+            procedure SetDataAlteracao (avalue : TDateTime);
+            property datacadastro :TDateTime read GetDataCadastro write SetDataCadastro;
+            property dataAlteracao: TDateTime read GetDataAlteracao write SetDataAlteracao ;
+             published
+               { published declarations }
+             end;
+implementation
+
+uses
+  System.SysUtils;
+
+{ TCategoria }
+
+procedure TCategoria.Setnomedacategoria(const Value: string);
+begin
+
+    Fnomedacategoria := UpperCase( VAlue );
+
+end;
+constructor TCategoria.Create;
+begin
+   //Fcodigo:=0;
+   datacadastro:=date;
+   dataAlteracao:=date;
+end;
+
+destructor TCategoria.Destroy;
+begin
+
+  inherited;
+end;
+
+function TCategoria.GetDataAlteracao: TDateTime;
+begin
+  Result:=StrToDateTime(FdataAlteracao);
+end;
+
+function TCategoria.GetDataCadastro: TDateTime;
+begin
+   Result:=StrToDateTime(Fdatacadastro);
+end;
+
+procedure TCategoria.Setcodigo(const Value: Integer);
+begin
+   Fcodigo := Value;
+end;
+
+
+procedure TCategoria.SetDataAlteracao(avalue: TDateTime);
+begin
+  FdataAlteracao:=FormatDateTime('DD/MM/YYYY',avalue);
+end;
+
+procedure TCategoria.SetDataCadastro(avalue: TDateTime);
+begin
+   Fdatacadastro:= FormatDateTime('DD/MM/YYYY',avalue);
+end;
+
+end.

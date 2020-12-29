@@ -1,0 +1,12 @@
+unit SistemaGestao.Model.IterfaceFactory;
+
+interface
+       type
+       Ifactory =interface
+         ['{00BE2D33-DB95-4368-85DA-18CE2525AAFF}']
+         procedure CriaCategoria;
+         procedure CriaFormadePagamento;
+       end;
+implementation
+
+end.

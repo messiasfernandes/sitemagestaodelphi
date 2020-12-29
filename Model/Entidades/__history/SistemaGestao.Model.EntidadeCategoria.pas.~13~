@@ -1,0 +1,33 @@
+unit SistemaGestao.Model.EntidadeCategoria;
+
+interface
+        uses SistemaGestao.Model.EntidadeBase;
+        type TCategoria = class(TModelBase)
+             private
+    Fnomedacategoria: string;
+    procedure Setnomedacategoria(const Value: string);
+               { private declarations }
+             protected
+               { protected declarations }
+             public
+            property nomedacategoria :string read Fnomedacategoria write Setnomedacategoria;
+
+             published
+               { published declarations }
+             end;
+implementation
+
+uses
+  System.SysUtils;
+
+{ TCategoria }
+
+procedure TCategoria.Setnomedacategoria(const Value: string);
+begin
+
+    Fnomedacategoria := UpperCase( VAlue );
+
+end;
+
+
+end.

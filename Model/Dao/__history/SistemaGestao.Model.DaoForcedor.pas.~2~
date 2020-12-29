@@ -1,0 +1,71 @@
+unit SistemaGestao.Model.DaoForcedor;
+
+interface
+        uses
+     SistemaGestao.Model.DmConexaoEventos, System.SysUtils,Vcl.Dialogs,
+        SistemaGestao.Model.EntidadeFornecedor, REST.Json,RESTRequest4D.Request,
+        RESTRequest4D.Response,System.Generics.Collections,System.JSON,
+        SistemaGestao.Model.EntidadeUsuarioComToken,
+         SistemaGestao.Model.IterfaceDao;
+        type
+        TDaoFonecedor = class(TInterfacedObject,Idao<TFornecedor>)
+        private
+
+        protected
+            dm:TDataEventos;
+        public
+          constructor Create;
+          destructor Destroy; override;
+
+        published
+        function salvar (objeto:TFornecedor;usuario:TUsuarioComToken):string;
+         function Carregar(objeto: TFornecedor;usuario:TUsuarioComToken): TFornecedor;
+         function Excluir (pid:integer;usuario:TUsuarioComToken):string;
+         function pesquisa(colecao: TObjectList<TFornecedor>;pchave,ptipo:string ;usuario:TUsuarioComToken): TObjectList<TFornecedor>;
+         function buscarTodos(colecao: TObjectList<TFornecedor> ): TObjectList<TFornecedor>;
+        end;
+implementation
+
+{ TDaoFonecedor }
+
+function TDaoFonecedor.buscarTodos(
+  colecao: TObjectList<TFornecedor>): TObjectList<TFornecedor>;
+begin
+
+end;
+
+function TDaoFonecedor.Carregar(objeto: TFornecedor;
+  usuario: TUsuarioComToken): TFornecedor;
+begin
+
+end;
+
+constructor TDaoFonecedor.Create;
+begin
+  dm:=TDataEventos.Create(nil);
+end;
+
+destructor TDaoFonecedor.Destroy;
+begin
+   dm.Free;
+  inherited;
+end;
+
+function TDaoFonecedor.Excluir(pid: integer; usuario: TUsuarioComToken): string;
+begin
+
+end;
+
+function TDaoFonecedor.pesquisa(colecao: TObjectList<TFornecedor>; pchave,
+  ptipo: string; usuario: TUsuarioComToken): TObjectList<TFornecedor>;
+begin
+
+end;
+
+function TDaoFonecedor.salvar(objeto: TFornecedor;
+  usuario: TUsuarioComToken): string;
+begin
+
+end;
+
+end.

@@ -1,0 +1,66 @@
+unit SistemaGestao.Contoller.ControllerUsuarioLogar;
+
+interface
+uses SistemaGestao.Model.Entidade.UsuarioLogar,
+ SistemaGestao.Model.DaoUsuarioLogar, SistemaGestao.Model.IterfaceDaoUsuario;
+
+       type TControllerUsuarioLogar = class
+            private
+    Fusuario: TUsuarioLogar;
+
+    procedure Setusuario(const Value: TUsuarioLogar);
+
+
+
+              { private declarations }
+            protected
+              { protected declarations }
+               daoUsuarioLogar: IDaoUsuario;
+
+            public
+
+
+            function acessar : Integer;
+             constructor  Create;
+             destructor Destroy; override;
+              property usuario:TUsuarioLogar read Fusuario write Setusuario;
+
+          function   pegatoken(ptoken: string): string;
+            published
+              { published declarations }
+            end;
+implementation
+
+{ TControlerUsuarioLogar }
+
+function TControllerUsuarioLogar.acessar:Integer;
+begin
+   Result:= daoUsuarioLogar.acessar(usuario);
+end;
+
+
+
+constructor TControllerUsuarioLogar.Create;
+begin
+    usuario:=TUsuarioLogar.Create;
+  daoUsuarioLogar:=TDaoUsuarioLogar.Create;
+end;
+
+destructor TControllerUsuarioLogar.Destroy;
+begin
+     usuario.Free;
+
+  inherited;
+end;
+
+function TControllerUsuarioLogar.pegatoken(ptoken: string): string;
+begin
+  Result:=daoUsuarioLogar.pegatoken(ptoken);
+end;
+
+procedure TControllerUsuarioLogar.Setusuario(const Value: TUsuarioLogar);
+begin
+  Fusuario := Value;
+end;
+
+end.

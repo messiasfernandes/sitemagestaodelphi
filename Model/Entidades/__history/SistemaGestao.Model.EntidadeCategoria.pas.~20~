@@ -1,0 +1,43 @@
+unit SistemaGestao.Model.EntidadeCategoria;
+
+interface
+        uses System.Generics.Collections;
+        type TCategoria = class
+
+  private
+    FIdCategoria: Integer;
+    FNomecategoria: string;
+    FLlistaCatecoria: TObjectList<Tcategoria>;
+    procedure SetLlistaCatecoria(const Value: TObjectList<Tcategoria>);
+  public
+  constructor Create;
+    destructor Destroy; override;
+  published
+    property IdCategoria: Integer read FIdCategoria write FIdCategoria;
+    property Nomecategoria: string read FNomecategoria write FNomecategoria;
+    property LlistaCatecoria: TObjectList<Tcategoria> read FLlistaCatecoria write SetLlistaCatecoria;
+
+
+  end;
+
+implementation
+
+{ TCategoria }
+
+constructor TCategoria.Create;
+begin
+   FLlistaCatecoria:=TObjectList<TCategoria>.Create();
+end;
+
+destructor TCategoria.Destroy;
+begin
+    FLlistaCatecoria.Free;
+  inherited;
+end;
+
+procedure TCategoria.SetLlistaCatecoria(const Value: TObjectList<Tcategoria>);
+begin
+  FLlistaCatecoria := Value;
+end;
+
+end.
